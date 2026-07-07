@@ -24,9 +24,17 @@ export default async function CheckoutPage() {
       <main className="container-shell py-12">
         <h1 className="text-4xl font-black text-slate-950">Checkout</h1>
         {!session ? (
-          <Link href="/login" className="mt-6 inline-flex rounded-full bg-brand px-6 py-3 font-black text-white">
-            Login to checkout
-          </Link>
+          <div className="mt-8 rounded-lg bg-white p-8 shadow-sm ring-1 ring-sky-100">
+            <p className="text-slate-600">Sign in or create an account to complete checkout securely with your phone number and M-Pesa details.</p>
+            <div className="mt-5 flex flex-wrap gap-3">
+              <Link href="/login?callbackUrl=/checkout" className="inline-flex rounded-full bg-brand px-6 py-3 font-black text-white">
+                Login to checkout
+              </Link>
+              <Link href="/register?callbackUrl=/checkout" className="inline-flex rounded-full border border-sky-100 px-6 py-3 font-black text-brand-dark">
+                Create account
+              </Link>
+            </div>
+          </div>
         ) : !cart?.items.length ? (
           <p className="mt-6 text-slate-600">Your cart is empty.</p>
         ) : (
@@ -53,4 +61,3 @@ export default async function CheckoutPage() {
     </>
   );
 }
-

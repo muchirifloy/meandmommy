@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Heart, Search, ShoppingBag, UserRound } from "lucide-react";
 import { getCatalog } from "@/lib/catalog";
 import { HeaderChrome } from "@/components/store/HeaderChrome";
+import { HeaderMobileControls } from "@/components/store/HeaderMobileControls";
 
 export async function Header() {
   const { categories } = await getCatalog();
@@ -26,14 +27,14 @@ export async function Header() {
             <Link
               key={category.slug}
               href={`/category/${category.slug}`}
-              className="rounded-full px-3 py-2 transition duration-200 hover:-translate-y-1 hover:scale-110 hover:bg-sun hover:text-slate-950 hover:shadow-lg"
+              className="rounded-full px-3 py-2 text-white transition duration-200 hover:-translate-y-1 hover:scale-110 hover:bg-sun hover:text-slate-950 hover:shadow-lg"
             >
               {category.name}
             </Link>
           ))}
         </nav>
 
-        <form action="/search" className="hidden w-72 items-center rounded-full border border-white/20 bg-white px-4 py-2 text-slate-950 md:flex">
+        <form action="/search" className="hidden w-72 items-center rounded-full border border-white/20 bg-white px-4 py-2 text-slate-950 lg:flex">
           <Search className="h-4 w-4 text-brand-dark" />
           <input
             name="q"
@@ -58,27 +59,7 @@ export async function Header() {
           </Link>
         </div>
       </div>
-      <div className="container-shell pb-3 md:hidden">
-        <form action="/search" className="flex items-center rounded-full border border-white/20 bg-white px-4 py-2 text-slate-950">
-          <Search className="h-4 w-4 text-brand-dark" />
-          <input
-            name="q"
-            placeholder="Search diapers, bottles..."
-            className="w-full bg-transparent px-3 text-sm outline-none placeholder:text-slate-400"
-          />
-        </form>
-      </div>
-      <nav className="container-shell flex gap-2 overflow-x-auto pb-3 text-sm font-bold text-slate-700 lg:hidden">
-        {categories.map((category) => (
-          <Link
-            key={category.slug}
-            href={`/category/${category.slug}`}
-            className="shrink-0 rounded-full bg-white/12 px-3 py-2 text-xs text-white transition hover:-translate-y-1 hover:scale-105 hover:bg-sun hover:text-slate-950"
-          >
-            {category.name}
-          </Link>
-        ))}
-      </nav>
+      <HeaderMobileControls categories={categories} />
     </HeaderChrome>
   );
 }

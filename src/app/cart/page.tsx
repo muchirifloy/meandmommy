@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { Footer } from "@/components/store/Footer";
+import { GuestCart } from "@/components/store/GuestCart";
 import { Header } from "@/components/store/Header";
 import { authOptions } from "@/lib/auth";
 import { getCart } from "@/lib/cart";
@@ -23,12 +24,7 @@ export default async function CartPage() {
       <main className="container-shell py-12">
         <h1 className="text-4xl font-black text-slate-950">Shopping Cart</h1>
         {!session ? (
-          <div className="mt-8 rounded-lg bg-white p-8 shadow-sm ring-1 ring-sky-100">
-            <p className="text-slate-600">Login to keep your cart synced across devices and checkout securely.</p>
-            <Link href="/login" className="mt-5 inline-flex rounded-full bg-brand px-6 py-3 font-black text-white">
-              Login to continue
-            </Link>
-          </div>
+          <GuestCart />
         ) : cart && cart.items.length ? (
           <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_360px]">
             <div className="grid gap-4">
@@ -64,4 +60,3 @@ export default async function CartPage() {
     </>
   );
 }
-

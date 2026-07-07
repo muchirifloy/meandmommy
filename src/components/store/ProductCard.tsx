@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ShoppingCart } from "lucide-react";
 import { useState } from "react";
+import { addGuestCartItem } from "@/lib/guest-cart";
 
 type ProductCardProps = {
   product: {
@@ -45,7 +46,14 @@ export function ProductCard({ product }: ProductCardProps) {
       return;
     }
 
-    window.location.href = "/login";
+    addGuestCartItem({
+      id: product.id,
+      name: product.name,
+      slug: product.slug,
+      imageUrl: product.imageUrl,
+      unitPrice: activePrice,
+    });
+    setState("added");
   }
 
   return (
@@ -99,4 +107,3 @@ export function ProductCard({ product }: ProductCardProps) {
     </article>
   );
 }
-

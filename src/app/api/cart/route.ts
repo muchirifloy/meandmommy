@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { authOptions } from "@/lib/auth";
 import { getCart } from "@/lib/cart";
-import { getDb } from "@/lib/db";
+import { getDb, hasDatabaseUrl } from "@/lib/db";
 
 const cartMutationSchema = z.object({
   productId: z.string().min(1),
@@ -11,6 +11,7 @@ const cartMutationSchema = z.object({
 });
 
 export async function GET() {
+  if (!hasDatabaseUrl()) return NextResponse.json({ error: "Database not configured" }, { status: 503 });
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Login required" }, { status: 401 });
 
@@ -18,6 +19,7 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  if (!hasDatabaseUrl()) return NextResponse.json({ error: "Database not configured" }, { status: 503 });
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Login required" }, { status: 401 });
 
@@ -45,4 +47,3 @@ export async function POST(request: Request) {
 
   return NextResponse.json(await getCart(session.user.id));
 }
-

@@ -2,21 +2,28 @@
 
 import { signIn } from "next-auth/react";
 import { useState } from "react";
+import { mergeGuestCart } from "@/lib/guest-cart";
 
 export function LoginForm() {
   const [error, setError] = useState("");
 
+  function callbackUrl() {
+    return new URLSearchParams(window.location.search).get("callbackUrl") || "/account";
+  }
+
   async function submit(formData: FormData) {
     setError("");
+    const nextUrl = callbackUrl();
     const result = await signIn("credentials", {
       email: formData.get("email"),
       password: formData.get("password"),
       redirect: false,
-      callbackUrl: "/account",
+      callbackUrl: nextUrl,
     });
 
     if (result?.ok) {
-      window.location.href = result.url || "/account";
+      await mergeGuestCart();
+      window.location.href = result.url || nextUrl;
       return;
     }
 
@@ -32,7 +39,7 @@ export function LoginForm() {
         <button className="rounded-full bg-brand px-5 py-3 font-black text-white hover:bg-brand-dark">Login</button>
       </form>
       <button
-        onClick={() => signIn("google", { callbackUrl: "/account" })}
+        onClick={() => signIn("google", { callbackUrl: callbackUrl() })}
         className="mt-3 w-full rounded-full border border-sky-100 px-5 py-3 font-black text-brand-dark hover:bg-sky-50"
       >
         Continue with Google
@@ -40,4 +47,3 @@ export function LoginForm() {
     </div>
   );
 }
-

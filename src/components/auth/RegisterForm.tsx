@@ -2,12 +2,18 @@
 
 import { signIn } from "next-auth/react";
 import { useState } from "react";
+import { mergeGuestCart } from "@/lib/guest-cart";
 
 export function RegisterForm() {
   const [error, setError] = useState("");
 
+  function callbackUrl() {
+    return new URLSearchParams(window.location.search).get("callbackUrl") || "/account";
+  }
+
   async function submit(formData: FormData) {
     setError("");
+    const nextUrl = callbackUrl();
     const response = await fetch("/api/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -25,11 +31,17 @@ export function RegisterForm() {
       return;
     }
 
-    await signIn("credentials", {
+    const result = await signIn("credentials", {
       email: formData.get("email"),
       password: formData.get("password"),
-      callbackUrl: "/account",
+      redirect: false,
+      callbackUrl: nextUrl,
     });
+
+    if (result?.ok) {
+      await mergeGuestCart();
+      window.location.href = result.url || nextUrl;
+    }
   }
 
   return (
@@ -45,4 +57,3 @@ export function RegisterForm() {
     </div>
   );
 }
-
