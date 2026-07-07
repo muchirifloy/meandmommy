@@ -10,6 +10,10 @@ function getBearerToken(request: NextRequest) {
   return authorization.slice("Bearer ".length).trim();
 }
 
+function redactSecrets(value: string) {
+  return value.replace(/mysql:\/\/[^@\s]+@/g, "mysql://***:***@");
+}
+
 export async function POST(request: NextRequest) {
   const expectedToken = process.env.SEED_RUN_TOKEN;
   const receivedToken = getBearerToken(request);
@@ -22,7 +26,17 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
 
-  await seedDatabase();
-
-  return NextResponse.json({ ok: true });
+  try {
+    await seedDatabase();
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown seed error.";
+    return NextResponse.json(
+      {
+        error: "Seed failed.",
+        detail: redactSecrets(message),
+      },
+      { status: 500 },
+    );
+  }
 }
