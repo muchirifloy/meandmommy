@@ -27,33 +27,38 @@ const categories = [
 
 const productDescriptions: Record<string, string> = {
   "me-and-mommy-breastmilk-storage-bags":
-    "Me & Mommy Breastmilk Storage Bags help breastfeeding and pumping mums store expressed milk with confidence. Each bag is made for breast milk storage, freezer organisation, daycare labelling, and easy portion control, so parents can build a practical milk stash without messy containers. Use after expressing by pouring cooled milk into the bag, leaving space for expansion before freezing, sealing securely, and writing the date and amount on the label area. Store bags flat to save freezer space, thaw the oldest milk first, and follow your healthcare provider or recognised breast milk storage guidance for safe timing. These bags are ideal for working mums, exclusive pumpers, occasional expressers, night feeds, travel, and families who want clean, organised milk storage in Nairobi and across Kenya.",
+    "Me & Mommy Breastmilk Storage Bags help breastfeeding and pumping mums store expressed milk with confidence. Each pack contains 30 pre-sterilised 220ml storage bags made for breast milk storage, freezer organisation, daycare labelling, and easy portion control, so parents can build a practical milk stash without messy containers. Use after expressing by pouring cooled milk into the bag, leaving space for expansion before freezing, sealing securely, and writing the date and amount on the label area. Store bags flat to save freezer space, thaw the oldest milk first, and follow your healthcare provider or recognised breast milk storage guidance for safe timing. These bags are ideal for working mums, exclusive pumpers, occasional expressers, night feeds, travel, and families who want clean, organised milk storage in Nairobi and across Kenya.",
   "me-and-mommy-sterilising-tablets":
-    "Me & Mommy Sterilising Tablets are made for parents who want a simple cold-water sterilising routine for baby bottles, teats, breast pump parts, pacifiers, cups, and feeding accessories. After feeds, wash items in warm soapy water, brush bottle and teat areas, rinse well, then prepare the sterilising solution according to the pack instructions and fully immerse clean feeding items for the recommended contact time. Cold-water sterilising is useful at home, during travel, at night, and anywhere steam sterilising is inconvenient. These tablets support hygienic feeding routines for newborns and infants, especially when bottles and pump parts are used every day.",
+    "Protect what matters most with Me & Mommy Sterilising Tablets. Keep your baby's feeding essentials clean and safe with a fast, effective, easy-to-use cold-water sterilising solution for bottles, teats, breast pump parts, pacifiers, toys, milk storage accessories, and weaning utensils. Each compact pack contains 30 tablets and is designed for everyday use at home, at night, at daycare, or while travelling. No boiling is needed when used according to the pack instructions. Wash items thoroughly before sterilising, dissolve one tablet in the recommended amount of cold water, fully submerge items with no trapped air bubbles, leave for the recommended sterilising time, then remove with clean hands or sterilised tongs and allow to drain before use. Made for mums, trusted by families, and created for every feed that matters.",
 };
 
 const products = [
   [
     "breastmilk-storage-bags",
     "Me & Mommy Breastmilk Storage Bags",
-    "Pre-sterilised milk storage bags for expressing mums: leak-resistant, freezer-friendly, easy to label, and made for organised breast milk storage.",
+    "30 pre-sterilised 220ml breastmilk storage bags for expressing mums: leak-resistant, freezer-friendly, easy to label, and made for organised milk storage.",
     "599.00",
     "650.00",
-    "BEST SELLER",
+    "30 PCS - 220ML",
     120,
     true,
   ],
   [
     "sterilising-tablets",
     "Me & Mommy Sterilising Tablets",
-    "Cold-water baby bottle sterilising tablets for bottles, teats, pump parts, and feeding accessories after washing and rinsing.",
-    "399.00",
-    "450.00",
-    "HYGIENE ESSENTIAL",
+    "30-tablet pack for cold-water sterilising of bottles, teats, breast pump parts, pacifiers, toys, and feeding accessories.",
+    "600.00",
+    null,
+    "30 TABLETS",
     140,
     true,
   ],
 ] as const;
+
+const productImages: Record<string, string> = {
+  "me-and-mommy-breastmilk-storage-bags": "/images/products/breastmilk-storage-bags-pack.jpeg",
+  "me-and-mommy-sterilising-tablets": "/images/products/sterilising-tablets-pack.jpeg",
+};
 
 function slugify(value: string) {
   return value
@@ -115,8 +120,8 @@ async function main() {
     const category = await prisma.category.findUniqueOrThrow({
       where: { slug: categorySlug },
     });
-    const imageUrl = category.imageUrl || "/images/me-and-mommy-logo.png";
     const slug = slugify(name);
+    const imageUrl = productImages[slug] || category.imageUrl || "/images/me-and-mommy-logo.png";
 
     await prisma.product.upsert({
       where: { slug },
