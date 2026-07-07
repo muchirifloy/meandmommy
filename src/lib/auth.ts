@@ -4,7 +4,7 @@ import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
-import { getDb } from "@/lib/db";
+import { getDb, hasDatabaseUrl } from "@/lib/db";
 
 const credentialsSchema = z.object({
   email: z.string().email(),
@@ -12,7 +12,7 @@ const credentialsSchema = z.object({
 });
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(getDb()) as NextAuthOptions["adapter"],
+  adapter: hasDatabaseUrl() ? (PrismaAdapter(getDb()) as NextAuthOptions["adapter"]) : undefined,
   session: { strategy: "jwt" },
   pages: {
     signIn: "/login",
@@ -30,6 +30,7 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
+        if (!hasDatabaseUrl()) return null;
         const parsed = credentialsSchema.safeParse(credentials);
 
         if (!parsed.success) return null;
@@ -70,4 +71,3 @@ export const authOptions: NextAuthOptions = {
     },
   },
 };
-

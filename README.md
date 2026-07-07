@@ -32,6 +32,8 @@ Open `http://localhost:3000`.
 
 ## Required Environment Variables
 
+For a temporary Vercel storefront preview, the app can build without `DATABASE_URL`; public pages will use the fallback starter catalog. Real ecommerce features still require MySQL.
+
 - `DATABASE_URL`
 - `NEXTAUTH_URL`
 - `NEXTAUTH_SECRET`
@@ -85,7 +87,7 @@ This account is created only after a real MySQL database is connected and `pnpm 
 
 ## Database
 
-Yes, this project should be connected to MySQL. The public catalog has a fallback starter catalog for development, but real ecommerce features such as admin login, customer accounts, carts, checkout, vouchers, M-Pesa payment records, orders, reviews, support tickets, stock, analytics, and email campaigns all depend on the database.
+Yes, this project should be connected to MySQL before launch. The public catalog has a fallback starter catalog for Vercel previews and development, but real ecommerce features such as admin login, customer accounts, carts, checkout, vouchers, M-Pesa payment records, orders, reviews, support tickets, stock, analytics, and email campaigns all depend on the database.
 
 ## Notes
 

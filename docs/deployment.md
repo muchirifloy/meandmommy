@@ -17,15 +17,25 @@ Recommended for the Next.js frontend/API layer.
 1. Push this repository to GitHub.
 2. Import the repository in Vercel.
 3. Set the framework to Next.js.
-4. Add every variable from `.env.example`.
-5. Use a hosted MySQL database, then set `DATABASE_URL`.
-6. Set build command:
+4. Set build command:
 
 ```bash
 pnpm db:generate && pnpm build
 ```
 
-7. After first deploy, run:
+5. For a quick storefront preview while MySQL is pending, add only:
+
+```bash
+NEXTAUTH_SECRET="replace-with-a-long-random-secret"
+NEXTAUTH_URL="https://your-vercel-url.vercel.app"
+NEXT_PUBLIC_SITE_URL="https://your-vercel-url.vercel.app"
+```
+
+Without `DATABASE_URL`, the public storefront uses the built-in starter catalog. Admin login, customer accounts, checkout, M-Pesa records, reviews, support tickets, offers, stock, and analytics stay unavailable until MySQL is connected.
+
+6. For the real ecommerce launch, add every variable from `.env.example`.
+7. Use a hosted MySQL database, then set `DATABASE_URL`.
+8. After the database is connected, run:
 
 ```bash
 pnpm db:push
