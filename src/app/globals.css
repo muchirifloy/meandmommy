@@ -70,45 +70,28 @@ select {
   backdrop-filter: blur(14px);
 }
 
-@keyframes review-marquee {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
+.shop-rail {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(155px, 1fr);
+  gap: 14px;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  padding: 4px 2px 14px;
+  scroll-snap-type: inline mandatory;
+  scrollbar-width: thin;
 }
 
-@keyframes hero-drift {
-  0%,
-  100% {
-    transform: scale(1.03) translate3d(0, 0, 0);
-  }
-  50% {
-    transform: scale(1.08) translate3d(-16px, 10px, 0);
-  }
+.shop-rail > * {
+  scroll-snap-align: start;
 }
 
-.hero-mother-scene::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: url("/images/mother-child-hero.png");
-  background-position: center right;
-  background-size: cover;
-  opacity: 0.72;
-  animation: hero-drift 18s ease-in-out infinite;
-  transform-origin: center;
-  will-change: transform;
+.product-rail {
+  grid-auto-columns: minmax(185px, 220px);
 }
 
-.hero-background-drift {
-  animation: hero-drift 18s ease-in-out infinite;
-}
-
-@media (max-width: 767px) {
-  .hero-mother-scene::before {
-    background-position: 62% center;
-    opacity: 0.46;
+@media (min-width: 1024px) {
+  .category-rail {
+    grid-auto-columns: minmax(170px, 1fr);
   }
 }

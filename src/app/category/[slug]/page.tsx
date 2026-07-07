@@ -41,14 +41,13 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
   return (
     <>
       <Header />
-      <main className="container-shell py-12">
-        <div className="rounded-lg bg-gradient-to-br from-brand-soft via-white to-petal p-8">
-          <p className="text-sm font-black uppercase tracking-wide text-brand-dark">Category</p>
-          <h1 className="mt-2 text-4xl font-black text-slate-950">{result.category.name}</h1>
-          <p className="mt-3 max-w-2xl leading-7 text-slate-600">{result.category.description}</p>
+      <main className="container-shell py-8">
+        <div className="rounded-lg border border-sky-100 bg-white p-5">
+          <p className="text-xs font-black uppercase tracking-wide text-brand-dark">Category</p>
+          <h1 className="mt-1 text-3xl font-black text-slate-950">{result.category.name}</h1>
         </div>
 
-        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="shop-rail product-rail mt-6">
           {result.products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}

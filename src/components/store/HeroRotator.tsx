@@ -51,7 +51,7 @@ export function HeroRotator({ slides, offer }: HeroRotatorProps) {
   }, [safeSlides.length]);
 
   return (
-    <section className="relative min-h-[calc(100vh-5rem)] overflow-hidden bg-sky-100">
+    <section className="relative min-h-[430px] overflow-hidden bg-sky-100">
       {safeSlides.map((item, index) => (
         <Image
           key={item.imageUrl}
@@ -67,7 +67,7 @@ export function HeroRotator({ slides, offer }: HeroRotatorProps) {
       ))}
       <div className="absolute inset-0 z-10 bg-gradient-to-r from-white/94 via-white/72 to-white/12" />
       <div className="absolute inset-0 z-10 bg-gradient-to-t from-white/72 via-transparent to-white/5" />
-      <div className="container-shell relative z-20 grid min-h-[calc(100vh-5rem)] items-center gap-10 py-10 lg:grid-cols-[1.02fr_0.98fr]">
+      <div className="container-shell relative z-20 grid min-h-[430px] items-center gap-8 py-8 lg:grid-cols-[0.95fr_1.05fr]">
         <div>
           {offer ? (
             <p className="inline-flex rounded-full bg-petal px-4 py-2 text-sm font-black text-brand-dark">
@@ -75,12 +75,12 @@ export function HeroRotator({ slides, offer }: HeroRotatorProps) {
               {offer.discountType === "PERCENTAGE" ? "% OFF" : " KES OFF"}
             </p>
           ) : null}
-          <p className="mt-5 text-sm font-black uppercase tracking-wide text-brand-dark">{slide.eyebrow}</p>
-          <h1 className="mt-3 max-w-3xl text-5xl font-black leading-[1.02] tracking-normal text-slate-950 md:text-7xl">
+          <p className="mt-4 text-xs font-black uppercase tracking-wide text-brand-dark">{slide.eyebrow}</p>
+          <h1 className="mt-2 max-w-2xl text-4xl font-black leading-tight tracking-normal text-slate-950 md:text-5xl">
             {slide.title}
           </h1>
-          <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-700">{slide.body}</p>
-          <div className="mt-8 flex flex-wrap gap-3">
+          <p className="mt-4 line-clamp-2 max-w-xl text-base leading-7 text-slate-700">{slide.body}</p>
+          <div className="mt-6 flex flex-wrap gap-3">
             <Link
               href={slide.href}
               className="rounded-full bg-brand px-6 py-3 text-sm font-black text-white shadow-xl shadow-sky-200 transition hover:bg-brand-dark"
@@ -94,7 +94,7 @@ export function HeroRotator({ slides, offer }: HeroRotatorProps) {
               Browse Categories
             </Link>
           </div>
-          <div className="mt-8 flex gap-2">
+          <div className="mt-6 flex gap-2">
             {safeSlides.map((item, index) => (
               <button
                 key={item.title}
@@ -108,7 +108,6 @@ export function HeroRotator({ slides, offer }: HeroRotatorProps) {
         </div>
 
         <div className="relative hidden lg:block">
-          <div className="absolute -inset-5 rounded-[2rem] bg-gradient-to-br from-brand-soft via-petal to-mint blur-2xl" />
           <div className="relative overflow-hidden rounded-lg soft-card">
             <Image
               src={slide.imageUrl}

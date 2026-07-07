@@ -12,22 +12,19 @@ type CategoryCardProps = {
 
 export function CategoryCard({ category }: CategoryCardProps) {
   return (
-    <Link href={`/category/${category.slug}`} className="group relative overflow-hidden rounded-lg soft-card">
-      <div className="relative aspect-[5/4] bg-brand-soft">
+    <Link href={`/category/${category.slug}`} className="group min-w-[150px] overflow-hidden rounded-lg border border-sky-100 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+      <div className="relative aspect-square bg-sky-50">
         <Image
           src={category.imageUrl}
           alt={category.name}
           fill
-          sizes="(max-width: 768px) 100vw, 25vw"
+          sizes="(max-width: 768px) 42vw, 220px"
           className="object-cover transition duration-500 group-hover:scale-105"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/10 to-transparent" />
       </div>
-      <div className="absolute inset-x-0 bottom-0 p-4 text-white">
-        <h3 className="text-xl font-black">{category.name}</h3>
-        <p className="mt-1 line-clamp-2 text-sm text-white/86">{category.description}</p>
+      <div className="p-3">
+        <h3 className="line-clamp-2 min-h-10 text-sm font-black leading-5 text-slate-950">{category.name}</h3>
       </div>
     </Link>
   );
 }
-
