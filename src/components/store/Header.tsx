@@ -1,9 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Heart, Search, ShoppingBag, UserRound } from "lucide-react";
-import { getCatalog } from "@/lib/catalog";
+import { Heart, Search, UserRound } from "lucide-react";
 import { HeaderChrome } from "@/components/store/HeaderChrome";
+import { HeaderCartLink } from "@/components/store/HeaderCartLink";
 import { HeaderMobileControls } from "@/components/store/HeaderMobileControls";
+import { getCatalog } from "@/lib/catalog";
 
 export async function Header() {
   const { categories } = await getCatalog();
@@ -11,7 +12,7 @@ export async function Header() {
   return (
     <HeaderChrome>
       <div className="container-shell flex min-h-16 items-center gap-3 py-2 md:min-h-20 md:gap-5">
-        <Link href="/" className="relative h-10 w-36 shrink-0 sm:w-44 md:h-12 md:w-52">
+        <Link href="/" className="relative h-10 w-28 shrink-0 sm:w-44 md:h-12 md:w-52">
           <Image
             src="/images/me-and-mommy-logo.png"
             alt="Me & Mommy"
@@ -44,22 +45,16 @@ export async function Header() {
         </form>
 
         <div className="ml-auto flex items-center gap-1 sm:gap-2">
+          <HeaderMobileControls categories={categories} />
           <Link href="/account" className="rounded-full p-2.5 text-white transition hover:bg-sun hover:text-slate-950">
             <UserRound className="h-5 w-5" />
           </Link>
           <Link href="/wishlist" className="hidden rounded-full p-2.5 text-white transition hover:bg-sun hover:text-slate-950 sm:inline-flex">
             <Heart className="h-5 w-5" />
           </Link>
-          <Link
-            href="/cart"
-            className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-2.5 text-sm font-bold text-brand-dark shadow-lg shadow-sky-950/10 transition hover:-translate-y-0.5 hover:shadow-xl sm:px-4"
-          >
-            <ShoppingBag className="h-5 w-5" />
-            <span className="hidden sm:inline">Cart</span>
-          </Link>
+          <HeaderCartLink />
         </div>
       </div>
-      <HeaderMobileControls categories={categories} />
     </HeaderChrome>
   );
 }

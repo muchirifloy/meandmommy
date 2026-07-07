@@ -16,15 +16,15 @@ export function HeaderMobileControls({ categories }: HeaderMobileControlsProps) 
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div className="container-shell pb-3 lg:hidden">
-      <div className="flex items-center justify-end gap-2">
+    <>
+      <div className="flex items-center gap-1 lg:hidden">
         <button
           type="button"
           onClick={() => {
             setSearchOpen((value) => !value);
             setMenuOpen(false);
           }}
-          className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white text-slate-950 shadow-sm"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-full text-white transition hover:bg-sun hover:text-slate-950"
           aria-label="Search products"
         >
           <Search className="h-5 w-5" />
@@ -35,7 +35,7 @@ export function HeaderMobileControls({ categories }: HeaderMobileControlsProps) 
             setMenuOpen((value) => !value);
             setSearchOpen(false);
           }}
-          className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-sun text-slate-950 shadow-sm"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-full text-white transition hover:bg-sun hover:text-slate-950"
           aria-label="Open categories"
         >
           {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -44,7 +44,7 @@ export function HeaderMobileControls({ categories }: HeaderMobileControlsProps) 
 
       <form
         action="/search"
-        className={`${searchOpen ? "mt-3 flex" : "hidden"} items-center rounded-full border border-white/20 bg-white px-4 py-2 text-slate-950`}
+        className={`${searchOpen ? "fixed left-3 right-3 top-[72px] z-50 flex md:top-[88px]" : "hidden"} items-center rounded-full border border-white/20 bg-white px-4 py-2 text-slate-950 shadow-xl`}
       >
         <Search className="h-4 w-4 text-brand-dark" />
         <input
@@ -55,7 +55,7 @@ export function HeaderMobileControls({ categories }: HeaderMobileControlsProps) 
       </form>
 
       <nav
-        className={`${menuOpen ? "mt-3 grid" : "hidden"} gap-2 rounded-lg bg-white p-3 text-sm font-black text-slate-950 shadow-xl ring-1 ring-sky-100`}
+        className={`${menuOpen ? "fixed left-3 right-3 top-[72px] z-50 grid md:top-[88px]" : "hidden"} gap-2 rounded-lg bg-slate-950 p-3 text-sm font-black text-white shadow-xl ring-1 ring-slate-700`}
       >
         {categories.map((category) => (
           <Link
@@ -67,6 +67,6 @@ export function HeaderMobileControls({ categories }: HeaderMobileControlsProps) 
           </Link>
         ))}
       </nav>
-    </div>
+    </>
   );
 }

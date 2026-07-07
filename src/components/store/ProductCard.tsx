@@ -43,6 +43,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
     if (response.ok) {
       setState("added");
+      window.dispatchEvent(new CustomEvent("cart-updated", { detail: { quantity: 1 } }));
       return;
     }
 
