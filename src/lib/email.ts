@@ -69,7 +69,7 @@ export function brandEmailTemplate({
             <tr>
               <td style="background:linear-gradient(135deg,#e8f6ff,#ffeaf1);padding:28px 28px 18px;">
                 <div style="font-size:34px;line-height:1;font-weight:800;color:#55aee2;">Me &amp; Mommy</div>
-                <div style="margin-top:10px;font-size:14px;font-weight:700;color:#1f7fb8;">Baby care essentials for modern parents</div>
+                <div style="margin-top:10px;font-size:14px;font-weight:700;color:#1f7fb8;">Breastmilk storage and bottle care essentials</div>
               </td>
             </tr>
             <tr>

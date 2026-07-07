@@ -82,7 +82,7 @@ export async function getCatalog() {
         description: category.description,
         imageUrl: category.imageUrl || "/images/me-and-mommy-logo.png",
       })),
-      products,
+      products: products.filter((product) => categories.some((category) => category.slug === product.categorySlug)),
     };
   } catch {
     return {
@@ -113,4 +113,3 @@ export async function getFeaturedProducts() {
   const catalog = await getCatalog();
   return catalog.products.filter((product) => product.featured).slice(0, 8);
 }
-

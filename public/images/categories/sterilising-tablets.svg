@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 675" role="img" aria-label="Sterilising tablets">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#f4faff"/>
+      <stop offset="1" stop-color="#e9fbf4"/>
+    </linearGradient>
+    <linearGradient id="tube" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#dbeafe"/>
+    </linearGradient>
+  </defs>
+  <rect width="900" height="675" rx="44" fill="url(#bg)"/>
+  <circle cx="180" cy="150" r="96" fill="#ffeaf1" opacity=".8"/>
+  <circle cx="710" cy="520" r="130" fill="#fff4cf" opacity=".75"/>
+  <g transform="translate(195 135)">
+    <rect x="85" y="40" width="250" height="410" rx="46" fill="url(#tube)" stroke="#1f7fb8" stroke-width="12"/>
+    <rect x="115" y="84" width="190" height="72" rx="24" fill="#55aee2"/>
+    <text x="210" y="130" text-anchor="middle" font-family="Arial, sans-serif" font-size="26" font-weight="800" fill="#ffffff">STERILE</text>
+    <circle cx="165" cy="240" r="34" fill="#ffffff" stroke="#55aee2" stroke-width="8"/>
+    <circle cx="255" cy="240" r="34" fill="#ffffff" stroke="#55aee2" stroke-width="8"/>
+    <circle cx="165" cy="330" r="34" fill="#ffffff" stroke="#55aee2" stroke-width="8"/>
+    <circle cx="255" cy="330" r="34" fill="#ffffff" stroke="#55aee2" stroke-width="8"/>
+  </g>
+  <g transform="translate(500 175)">
+    <path d="M145 0c80 0 145 65 145 145s-65 145-145 145S0 225 0 145 65 0 145 0Z" fill="#ffffff" stroke="#55aee2" stroke-width="12"/>
+    <path d="M70 145h150" stroke="#1f7fb8" stroke-width="18" stroke-linecap="round"/>
+    <path d="M145 70v150" stroke="#1f7fb8" stroke-width="18" stroke-linecap="round" opacity=".22"/>
+  </g>
+  <text x="450" y="620" text-anchor="middle" font-family="Arial, sans-serif" font-size="42" font-weight="800" fill="#172033">Sterilising Tablets</text>
+</svg>

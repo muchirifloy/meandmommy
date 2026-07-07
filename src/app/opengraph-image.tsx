@@ -23,9 +23,9 @@ export default function Image() {
         }}
       >
         <div style={{ color: "#55aee2", fontSize: 64 }}>Me & Mommy</div>
-        <div style={{ marginTop: 24 }}>Baby care essentials for modern parents</div>
+        <div style={{ marginTop: 24 }}>Breastmilk storage and bottle care essentials</div>
         <div style={{ marginTop: 20, fontSize: 28, fontWeight: 500 }}>
-          Baby diapers, feeding bottles, teethers, soothers, and care products.
+          Breastmilk storage bags and sterilising tablets for modern parents.
         </div>
       </div>
     ),

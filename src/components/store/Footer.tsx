@@ -21,7 +21,7 @@ export async function Footer() {
             />
           </Link>
           <p className="mt-4 max-w-sm text-sm leading-6 text-slate-300">
-            Gentle baby-care essentials for feeding, hygiene, comfort, and everyday parent confidence.
+            Breastmilk storage bags and sterilising tablets for cleaner, calmer feeding routines.
           </p>
           <div className="mt-4 flex gap-3 text-sun">
             <Share2 className="h-5 w-5" />

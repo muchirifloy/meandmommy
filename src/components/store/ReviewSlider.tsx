@@ -1,8 +1,8 @@
 const reviews = [
-  ["Me & Mommy makes it easier to pick safe, practical baby essentials without overthinking every purchase.", "Achieng, Nairobi"],
-  ["The diaper and feeding ranges feel thoughtfully selected for daily routines, travel, and long nights.", "Wanjiku, Kiambu"],
-  ["I love that checkout is simple and I can ask questions quickly on WhatsApp before buying.", "Njeri, Westlands"],
-  ["The product cards are clear, the prices are easy to compare, and the store feels built for parents.", "Mary, Mombasa"],
+  ["The storage bags make pumping at work easier because I can label, freeze, and organise milk without extra containers.", "Achieng, Nairobi"],
+  ["The sterilising tablets are simple for night feeds and travel. Wash, rinse, soak, and the bottles are ready.", "Wanjiku, Kiambu"],
+  ["I like that Me & Mommy focuses on the two things I actually reorder: milk bags and sterilising tablets.", "Njeri, Westlands"],
+  ["The product pages explain how to use each item, which makes buying feel clear and practical.", "Mary, Mombasa"],
 ];
 
 export function ReviewSlider() {
@@ -12,7 +12,7 @@ export function ReviewSlider() {
     <section className="overflow-hidden py-12">
       <div className="container-shell">
         <p className="text-sm font-black uppercase tracking-wide text-brand-dark">Testimonials</p>
-        <h2 className="mt-2 text-3xl font-black text-slate-950">Parents trust the comfort.</h2>
+        <h2 className="mt-2 text-3xl font-black text-slate-950">Parents trust the routine.</h2>
       </div>
       <div className="mt-8 flex w-max animate-[review-marquee_32s_linear_infinite] gap-5 px-4">
         {loop.map(([text, author], index) => (

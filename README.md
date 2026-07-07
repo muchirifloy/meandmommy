@@ -102,7 +102,7 @@ The app includes:
 - OpenGraph image route
 - Product/category metadata
 - Product structured data for price, availability, brand, and category
-- SEO-focused starter category and product copy for Kenyan baby-care searches
+- SEO-focused starter category and product copy for breastmilk storage bags and sterilising tablets
 - Fast server-rendered pages
 
 Ranking first is not something any codebase can honestly guarantee, but this gives the site the technical SEO foundation needed for indexing and ranking work.

@@ -39,7 +39,7 @@ export async function Header() {
           <Search className="h-4 w-4 text-brand-dark" />
           <input
             name="q"
-            placeholder="Search baby essentials"
+            placeholder="Search storage bags"
             className="w-full bg-transparent px-3 text-sm outline-none placeholder:text-slate-400"
           />
         </form>

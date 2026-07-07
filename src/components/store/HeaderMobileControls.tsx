@@ -49,7 +49,7 @@ export function HeaderMobileControls({ categories }: HeaderMobileControlsProps) 
         <Search className="h-4 w-4 text-brand-dark" />
         <input
           name="q"
-          placeholder="Search diapers, bottles..."
+          placeholder="Search storage bags, tablets..."
           className="w-full bg-transparent px-3 text-sm outline-none placeholder:text-slate-400"
         />
       </form>
