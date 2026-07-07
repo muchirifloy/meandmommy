@@ -3,6 +3,7 @@ import { seedDatabase } from "../../../../../prisma/seed";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 function getBearerToken(request: NextRequest) {
   const authorization = request.headers.get("authorization");
@@ -33,10 +34,11 @@ export async function POST(request: NextRequest) {
     const message = error instanceof Error ? error.message : "Unknown seed error.";
     return NextResponse.json(
       {
+        ok: false,
         error: "Seed failed.",
         detail: redactSecrets(message),
       },
-      { status: 500 },
+      { status: 200 },
     );
   }
 }
