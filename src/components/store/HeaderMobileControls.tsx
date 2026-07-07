@@ -66,6 +66,9 @@ export function HeaderMobileControls({ categories }: HeaderMobileControlsProps) 
             {category.name}
           </Link>
         ))}
+        <Link href="/videos" className="rounded-lg px-3 py-2 transition hover:bg-sun hover:text-slate-950">
+          Videos
+        </Link>
       </nav>
     </>
   );

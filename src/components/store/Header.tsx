@@ -33,6 +33,12 @@ export async function Header() {
               {category.name}
             </Link>
           ))}
+          <Link
+            href="/videos"
+            className="rounded-full px-3 py-2 text-white transition duration-200 hover:-translate-y-1 hover:scale-110 hover:bg-sun hover:text-slate-950 hover:shadow-lg"
+          >
+            Videos
+          </Link>
         </nav>
 
         <form action="/search" className="hidden w-72 items-center rounded-full border border-white/20 bg-white px-4 py-2 text-slate-950 lg:flex">

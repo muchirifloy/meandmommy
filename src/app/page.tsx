@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { CategoryCard } from "@/components/store/CategoryCard";
 import { Footer } from "@/components/store/Footer";
 import { Header } from "@/components/store/Header";
@@ -7,8 +8,68 @@ import { ProductCard } from "@/components/store/ProductCard";
 import { getCatalog, getFeaturedProducts } from "@/lib/catalog";
 import { getHomeOffer } from "@/lib/offers";
 
+export const metadata: Metadata = {
+  title: "Me & Mommy Baby Shop Kenya | Breastmilk Storage Bags, Sterilising Tablets & Care",
+  description:
+    "Shop Me & Mommy Kenya for breastmilk storage bags, baby bottle sterilising tablets, baby brushes, breast pump accessories, cream care products, and feeding essentials in Nairobi.",
+  keywords: [
+    "Me and Mommy Kenya",
+    "Me & Mommy baby shop",
+    "baby shop Kenya",
+    "baby shop Nairobi",
+    "breastmilk storage bags Kenya",
+    "breast milk storage bags Nairobi",
+    "milk storage bags 220ml",
+    "baby bottle sterilising tablets Kenya",
+    "sterilising tablets for baby bottles",
+    "breast pump accessories Kenya",
+    "baby bottle brush Kenya",
+    "baby toothbrush Kenya",
+    "baby cream Kenya",
+    "M-Pesa baby shop Kenya",
+  ],
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: "Me & Mommy Baby Shop Kenya",
+    description:
+      "Breastmilk storage bags, sterilising tablets, brushes, breast pump accessories, and cream care products for Kenyan parents.",
+    url: "/",
+    type: "website",
+    images: [{ url: "/images/hero/me-and-mommy-hero-products.webp", width: 1600, height: 900, alt: "Me & Mommy baby feeding and care products" }],
+  },
+};
+
 export default async function Home() {
   const [{ categories, products }, featuredProducts, homeOffer] = await Promise.all([getCatalog(), getFeaturedProducts(), getHomeOffer()]);
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://meandmommy.co.ke";
+  const homeJsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Store",
+        name: "Me & Mommy",
+        url: baseUrl,
+        image: `${baseUrl}/images/hero/me-and-mommy-hero-products.webp`,
+        email: "info@meandmommy.co.ke",
+        telephone: "+254724736495",
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: "Nairobi",
+          addressCountry: "KE",
+        },
+      },
+      {
+        "@type": "WebSite",
+        name: "Me & Mommy",
+        url: baseUrl,
+        potentialAction: {
+          "@type": "SearchAction",
+          target: `${baseUrl}/search?q={search_term_string}`,
+          "query-input": "required name=search_term_string",
+        },
+      },
+    ],
+  };
   const heroCopy: Record<string, { title: string; body: string; eyebrow: string }> = {
     "me-and-mommy-breastmilk-storage-bags": {
       eyebrow: "Breastmilk storage bags",
@@ -48,6 +109,10 @@ export default async function Home() {
   return (
     <>
       <Header />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(homeJsonLd) }}
+      />
       <main>
         <HeroRotator slides={heroSlides} offer={homeOffer} />
 

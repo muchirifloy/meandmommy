@@ -90,6 +90,10 @@ select {
   grid-auto-columns: minmax(185px, 220px);
 }
 
+.video-rail {
+  grid-auto-columns: minmax(280px, 360px);
+}
+
 @media (min-width: 1024px) {
   .category-rail {
     grid-auto-columns: minmax(170px, 1fr);
