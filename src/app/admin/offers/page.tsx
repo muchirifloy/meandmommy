@@ -1,9 +1,10 @@
 import { DiscountType, OfferAudience } from "@prisma/client";
 import { upsertOffer } from "@/app/admin/actions";
-import { getDb } from "@/lib/db";
+import { getOptionalDb } from "@/lib/db";
 
 export default async function AdminOffersPage() {
-  const offers = await getDb().offer.findMany({ orderBy: { updatedAt: "desc" } }).catch(() => []);
+  const db = getOptionalDb();
+  const offers = db ? await db.offer.findMany({ orderBy: { updatedAt: "desc" } }).catch(() => []) : [];
   const first = offers[0];
 
   return (

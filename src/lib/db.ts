@@ -19,3 +19,8 @@ export function getDb() {
 
   return globalForPrisma.prisma;
 }
+
+export function getOptionalDb() {
+  if (!hasDatabaseUrl()) return null;
+  return getDb();
+}

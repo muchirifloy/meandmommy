@@ -1,9 +1,10 @@
 import { TicketStatus } from "@prisma/client";
 import { emailTicketReport, updateTicketStatus } from "@/app/admin/actions";
-import { getDb } from "@/lib/db";
+import { getOptionalDb } from "@/lib/db";
 
 export default async function AdminSupportPage() {
-  const tickets = await getDb().supportTicket.findMany({ orderBy: { createdAt: "desc" }, take: 100 }).catch(() => []);
+  const db = getOptionalDb();
+  const tickets = db ? await db.supportTicket.findMany({ orderBy: { createdAt: "desc" }, take: 100 }).catch(() => []) : [];
 
   return (
     <section>

@@ -1,7 +1,8 @@
-import { getDb } from "@/lib/db";
+import { getOptionalDb } from "@/lib/db";
 
 export default async function AdminSecurityPage() {
-  const logs = await getDb().auditLog.findMany({ include: { actor: true }, orderBy: { createdAt: "desc" }, take: 100 }).catch(() => []);
+  const db = getOptionalDb();
+  const logs = db ? await db.auditLog.findMany({ include: { actor: true }, orderBy: { createdAt: "desc" }, take: 100 }).catch(() => []) : [];
 
   return (
     <section>
@@ -29,4 +30,3 @@ export default async function AdminSecurityPage() {
     </section>
   );
 }
-

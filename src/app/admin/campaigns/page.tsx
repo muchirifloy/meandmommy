@@ -1,8 +1,9 @@
 import { createCampaign, sendCampaign } from "@/app/admin/actions";
-import { getDb } from "@/lib/db";
+import { getOptionalDb } from "@/lib/db";
 
 export default async function AdminCampaignsPage() {
-  const campaigns = await getDb().emailCampaign.findMany({ orderBy: { createdAt: "desc" }, take: 50 }).catch(() => []);
+  const db = getOptionalDb();
+  const campaigns = db ? await db.emailCampaign.findMany({ orderBy: { createdAt: "desc" }, take: 50 }).catch(() => []) : [];
 
   return (
     <section>

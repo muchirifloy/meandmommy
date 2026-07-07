@@ -1,12 +1,14 @@
 import { createProduct } from "@/app/admin/actions";
-import { getDb } from "@/lib/db";
+import { getOptionalDb } from "@/lib/db";
 
 export default async function AdminProductsPage() {
-  const db = getDb();
-  const [categories, products] = await Promise.all([
-    db.category.findMany({ orderBy: { name: "asc" } }).catch(() => []),
-    db.product.findMany({ include: { category: true }, orderBy: { createdAt: "desc" }, take: 50 }).catch(() => []),
-  ]);
+  const db = getOptionalDb();
+  const [categories, products] = db
+    ? await Promise.all([
+        db.category.findMany({ orderBy: { name: "asc" } }).catch(() => []),
+        db.product.findMany({ include: { category: true }, orderBy: { createdAt: "desc" }, take: 50 }).catch(() => []),
+      ])
+    : [[], []];
 
   return (
     <section>

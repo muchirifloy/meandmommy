@@ -1,9 +1,10 @@
 import { ReviewStatus } from "@prisma/client";
 import { deleteReview, updateReviewStatus } from "@/app/admin/actions";
-import { getDb } from "@/lib/db";
+import { getOptionalDb } from "@/lib/db";
 
 export default async function AdminReviewsPage() {
-  const reviews = await getDb().review.findMany({ include: { product: true }, orderBy: { createdAt: "desc" }, take: 100 }).catch(() => []);
+  const db = getOptionalDb();
+  const reviews = db ? await db.review.findMany({ include: { product: true }, orderBy: { createdAt: "desc" }, take: 100 }).catch(() => []) : [];
 
   return (
     <section>
@@ -34,4 +35,3 @@ export default async function AdminReviewsPage() {
     </section>
   );
 }
-

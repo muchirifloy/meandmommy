@@ -3,13 +3,15 @@ import { getServerSession } from "next-auth";
 import { Footer } from "@/components/store/Footer";
 import { Header } from "@/components/store/Header";
 import { authOptions } from "@/lib/auth";
-import { getDb } from "@/lib/db";
+import { getOptionalDb } from "@/lib/db";
 
 export default async function AccountPage() {
   const session = await getServerSession(authOptions);
-  const orders = session?.user?.id
-    ? await getDb().order.findMany({ where: { userId: session.user.id }, orderBy: { createdAt: "desc" } }).catch(() => [])
-    : [];
+  const db = getOptionalDb();
+  const orders =
+    session?.user?.id && db
+      ? await db.order.findMany({ where: { userId: session.user.id }, orderBy: { createdAt: "desc" } }).catch(() => [])
+      : [];
 
   return (
     <>
@@ -45,4 +47,3 @@ export default async function AccountPage() {
     </>
   );
 }
-

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { BrandLoader } from "@/components/store/BrandLoader";
 
 export function CheckoutForm({ email, name }: { email?: string | null; name?: string | null }) {
   const [message, setMessage] = useState("");
@@ -41,7 +42,7 @@ export function CheckoutForm({ email, name }: { email?: string | null; name?: st
       <input name="voucherCode" placeholder="Voucher code e.g. ME&MOMMY" className="rounded-lg border border-sky-100 px-4 py-3 uppercase outline-none focus:border-brand" />
       <textarea name="notes" placeholder="Delivery notes" className="min-h-24 rounded-lg border border-sky-100 px-4 py-3 outline-none focus:border-brand" />
       <button disabled={loading} className="rounded-full bg-brand px-6 py-3 font-black text-white hover:bg-brand-dark disabled:opacity-60">
-        {loading ? "Sending STK..." : "Pay with M-Pesa Express"}
+        {loading ? <BrandLoader label="Sending STK..." /> : "Pay with M-Pesa Express"}
       </button>
       {message ? <p className="text-sm font-bold text-brand-dark">{message}</p> : null}
     </form>

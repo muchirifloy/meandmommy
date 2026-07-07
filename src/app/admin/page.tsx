@@ -1,4 +1,4 @@
-import { getDb } from "@/lib/db";
+import { getOptionalDb } from "@/lib/db";
 
 function startOfMonth(offset = 0) {
   const date = new Date();
@@ -28,7 +28,8 @@ export default async function AdminPage() {
   };
 
   try {
-    const db = getDb();
+    const db = getOptionalDb();
+    if (!db) throw new Error("Database not configured.");
     const currentStart = startOfMonth(0);
     const nextStart = startOfMonth(1);
     const previousStart = startOfMonth(-1);

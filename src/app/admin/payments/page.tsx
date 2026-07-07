@@ -1,8 +1,9 @@
 import { verifyPayment } from "@/app/admin/actions";
-import { getDb } from "@/lib/db";
+import { getOptionalDb } from "@/lib/db";
 
 export default async function AdminPaymentsPage() {
-  const payments = await getDb().payment.findMany({ include: { order: true }, orderBy: { createdAt: "desc" }, take: 100 }).catch(() => []);
+  const db = getOptionalDb();
+  const payments = db ? await db.payment.findMany({ include: { order: true }, orderBy: { createdAt: "desc" }, take: 100 }).catch(() => []) : [];
 
   return (
     <section>
@@ -25,4 +26,3 @@ export default async function AdminPaymentsPage() {
     </section>
   );
 }
-

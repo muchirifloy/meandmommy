@@ -2,10 +2,12 @@
 
 import { signIn } from "next-auth/react";
 import { useState } from "react";
+import { BrandLoader } from "@/components/store/BrandLoader";
 import { mergeGuestCart } from "@/lib/guest-cart";
 
 export function RegisterForm() {
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   function callbackUrl() {
     return new URLSearchParams(window.location.search).get("callbackUrl") || "/account";
@@ -13,6 +15,7 @@ export function RegisterForm() {
 
   async function submit(formData: FormData) {
     setError("");
+    setLoading(true);
     const nextUrl = callbackUrl();
     const response = await fetch("/api/register", {
       method: "POST",
@@ -28,6 +31,7 @@ export function RegisterForm() {
     if (!response.ok) {
       const data = await response.json().catch(() => ({}));
       setError(data.error || "Registration failed.");
+      setLoading(false);
       return;
     }
 
@@ -41,7 +45,10 @@ export function RegisterForm() {
     if (result?.ok) {
       await mergeGuestCart();
       window.location.href = result.url || nextUrl;
+      return;
     }
+
+    setLoading(false);
   }
 
   return (
@@ -52,7 +59,9 @@ export function RegisterForm() {
         <input name="phone" placeholder="Phone number" className="rounded-lg border border-sky-100 px-4 py-3 outline-none focus:border-brand" />
         <input name="password" type="password" required minLength={8} placeholder="Password" className="rounded-lg border border-sky-100 px-4 py-3 outline-none focus:border-brand" />
         {error ? <p className="text-sm font-bold text-red-600">{error}</p> : null}
-        <button className="rounded-full bg-brand px-5 py-3 font-black text-white hover:bg-brand-dark">Create Account</button>
+        <button disabled={loading} className="rounded-full bg-brand px-5 py-3 font-black text-white hover:bg-brand-dark disabled:opacity-60">
+          {loading ? <BrandLoader label="Creating account..." /> : "Create Account"}
+        </button>
       </form>
     </div>
   );

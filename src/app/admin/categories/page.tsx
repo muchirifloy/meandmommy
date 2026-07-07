@@ -1,8 +1,9 @@
 import { createCategory } from "@/app/admin/actions";
-import { getDb } from "@/lib/db";
+import { getOptionalDb } from "@/lib/db";
 
 export default async function AdminCategoriesPage() {
-  const categories = await getDb().category.findMany({ orderBy: { sortOrder: "asc" } }).catch(() => []);
+  const db = getOptionalDb();
+  const categories = db ? await db.category.findMany({ orderBy: { sortOrder: "asc" } }).catch(() => []) : [];
 
   return (
     <section>
@@ -28,4 +29,3 @@ export default async function AdminCategoriesPage() {
     </section>
   );
 }
-

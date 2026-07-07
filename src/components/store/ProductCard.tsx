@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ShoppingCart } from "lucide-react";
 import { useState } from "react";
+import { BrandLoader } from "@/components/store/BrandLoader";
 import { addGuestCartItem } from "@/lib/guest-cart";
 
 type ProductCardProps = {
@@ -97,7 +98,7 @@ export function ProductCard({ product }: ProductCardProps) {
             className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-brand text-white shadow-lg shadow-sky-100 transition hover:bg-brand-dark disabled:cursor-not-allowed disabled:opacity-50"
             title="Add to cart"
           >
-            <ShoppingCart className="h-5 w-5" />
+            {state === "adding" ? <BrandLoader label="" compact /> : <ShoppingCart className="h-5 w-5" />}
           </button>
         </div>
         <p className="mt-3 text-xs font-medium text-slate-500">

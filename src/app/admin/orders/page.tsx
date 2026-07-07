@@ -1,9 +1,10 @@
 import { OrderStatus } from "@prisma/client";
 import { updateOrderStatus } from "@/app/admin/actions";
-import { getDb } from "@/lib/db";
+import { getOptionalDb } from "@/lib/db";
 
 export default async function AdminOrdersPage() {
-  const orders = await getDb().order.findMany({ orderBy: { createdAt: "desc" }, take: 100 }).catch(() => []);
+  const db = getOptionalDb();
+  const orders = db ? await db.order.findMany({ orderBy: { createdAt: "desc" }, take: 100 }).catch(() => []) : [];
 
   return (
     <section>
@@ -33,4 +34,3 @@ export default async function AdminOrdersPage() {
     </section>
   );
 }
-

@@ -30,7 +30,7 @@ export function HeaderCartLink({ initialCount = 0 }: { initialCount?: number }) 
   return (
     <Link
       href="/cart"
-      className="relative inline-flex h-10 w-10 items-center justify-center rounded-full bg-sun text-slate-950 shadow-lg shadow-sky-950/10 transition hover:-translate-y-0.5 hover:bg-white hover:shadow-xl sm:h-auto sm:w-auto sm:gap-2 sm:px-4 sm:py-2.5"
+      className="relative inline-flex h-10 w-10 items-center justify-center rounded-full text-white transition hover:-translate-y-0.5 hover:bg-sun hover:text-slate-950 sm:h-auto sm:w-auto sm:gap-2 sm:px-3 sm:py-2.5"
       aria-label={`Cart${count ? `, ${count} items` : ""}`}
     >
       <ShoppingBag className="h-5 w-5" />

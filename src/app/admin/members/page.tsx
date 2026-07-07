@@ -1,9 +1,10 @@
 import { Role } from "@prisma/client";
 import { updateUserRole } from "@/app/admin/actions";
-import { getDb } from "@/lib/db";
+import { getOptionalDb } from "@/lib/db";
 
 export default async function AdminMembersPage() {
-  const users = await getDb().user.findMany({ orderBy: { createdAt: "desc" }, take: 100 }).catch(() => []);
+  const db = getOptionalDb();
+  const users = db ? await db.user.findMany({ orderBy: { createdAt: "desc" }, take: 100 }).catch(() => []) : [];
 
   return (
     <section>
@@ -31,4 +32,3 @@ export default async function AdminMembersPage() {
     </section>
   );
 }
-
