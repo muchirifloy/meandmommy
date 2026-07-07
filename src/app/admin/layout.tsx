@@ -15,6 +15,7 @@ const links = [
   ["Support", "/admin/support"],
   ["Members", "/admin/members"],
   ["Emails", "/admin/campaigns"],
+  ["Videos", "/admin/videos"],
   ["Security", "/admin/security"],
 ];
 

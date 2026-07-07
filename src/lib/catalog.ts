@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { getDb } from "@/lib/db";
-import { seedCategories, seedProducts } from "@/lib/seed-data";
+import { seedCategories, seedProducts, seedVideoGuides } from "@/lib/seed-data";
 
 type ProductWithImage = {
   id: string;
@@ -14,8 +14,18 @@ type ProductWithImage = {
   stock: number;
   featured: boolean;
   imageUrl: string;
+  images: { url: string; alt: string }[];
   categorySlug: string;
   categoryName: string;
+};
+
+export type VideoGuideItem = {
+  id: string;
+  title: string;
+  footnote: string;
+  url: string;
+  posterUrl: string | null;
+  productSlug: string | null;
 };
 
 function money(value: Prisma.Decimal | number | null | undefined) {
@@ -42,7 +52,7 @@ async function dbProducts(): Promise<ProductWithImage[]> {
     where: { isActive: true },
     include: {
       category: true,
-      images: { orderBy: { sortOrder: "asc" }, take: 1 },
+      images: { orderBy: { sortOrder: "asc" } },
     },
     orderBy: [{ featured: "desc" }, { createdAt: "desc" }],
   });
@@ -59,6 +69,10 @@ async function dbProducts(): Promise<ProductWithImage[]> {
     stock: product.stock,
     featured: product.featured,
     imageUrl: product.images[0]?.url || product.category.imageUrl || "/images/me-and-mommy-logo.png",
+    images:
+      product.images.length > 0
+        ? product.images.map((image) => ({ url: image.url, alt: image.alt }))
+        : [{ url: product.category.imageUrl || "/images/me-and-mommy-logo.png", alt: product.name }],
     categorySlug: product.category.slug,
     categoryName: product.category.name,
   }));
@@ -112,4 +126,42 @@ export async function getProduct(slug: string) {
 export async function getFeaturedProducts() {
   const catalog = await getCatalog();
   return catalog.products.filter((product) => product.featured).slice(0, 8);
+}
+
+export async function getVideoGuides(productSlug?: string): Promise<VideoGuideItem[]> {
+  try {
+    const db = getDb();
+    const guides = await db.videoGuide.findMany({
+      where: {
+        isActive: true,
+        OR: productSlug
+          ? [{ product: { slug: productSlug } }, { productId: null }]
+          : undefined,
+      },
+      include: { product: { select: { slug: true } } },
+      orderBy: { sortOrder: "asc" },
+      take: 10,
+    });
+
+    return guides.map((guide) => ({
+      id: guide.id,
+      title: guide.title,
+      footnote: guide.footnote,
+      url: guide.url,
+      posterUrl: guide.posterUrl,
+      productSlug: guide.product?.slug || null,
+    }));
+  } catch {
+    return seedVideoGuides
+      .filter((guide) => !productSlug || !guide.productSlug || guide.productSlug === productSlug)
+      .sort((a, b) => a.sortOrder - b.sortOrder)
+      .map((guide) => ({
+        id: guide.title,
+        title: guide.title,
+        footnote: guide.footnote,
+        url: guide.url,
+        posterUrl: guide.posterUrl || null,
+        productSlug: guide.productSlug || null,
+      }));
+  }
 }

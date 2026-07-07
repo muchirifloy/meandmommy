@@ -5,7 +5,7 @@ import { Footer } from "@/components/store/Footer";
 import { Header } from "@/components/store/Header";
 import { ProductCard } from "@/components/store/ProductCard";
 import { ReviewForm } from "@/components/reviews/ReviewForm";
-import { getCatalog, getProduct } from "@/lib/catalog";
+import { getCatalog, getProduct, getVideoGuides } from "@/lib/catalog";
 
 const productEducation = {
   "me-and-mommy-sterilising-tablets": {
@@ -66,12 +66,6 @@ const productEducation = {
   },
 } as const;
 
-const videoGuides = [
-  ["How to prepare a cold-water sterilising routine", "Wash first, dissolve, submerge fully, wait, then drain with clean hands or tongs."],
-  ["How to organise expressed milk bags", "Label with date and amount, store flat, and use the oldest milk first."],
-  ["How to pair the essentials", "Use clean pump parts, store milk in bags, and sterilise feeding accessories before use."],
-];
-
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const product = await getProduct(slug);
@@ -80,15 +74,24 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const description = product.description || product.shortDescription;
 
   return {
-    title: `${product.name} in Kenya | Me & Mommy`,
+    title: `Buy ${product.name} in Kenya`,
     description,
+    keywords: [
+      product.name,
+      `${product.name} Kenya`,
+      product.categoryName,
+      `${product.categoryName} Kenya`,
+      "Me & Mommy",
+      "baby care Kenya",
+      "Nairobi baby shop",
+    ],
     alternates: { canonical: `/product/${product.slug}` },
     openGraph: {
       title: `${product.name} | Me & Mommy`,
       description,
       url: `${baseUrl}/product/${product.slug}`,
       type: "website",
-      images: [{ url: product.imageUrl }],
+      images: product.images.map((image) => ({ url: image.url, alt: image.alt })),
     },
   };
 }
@@ -107,7 +110,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
   if (!product) notFound();
 
-  const { products } = await getCatalog();
+  const [{ products }, videoGuides] = await Promise.all([getCatalog(), getVideoGuides(product.slug)]);
   const related = products
     .filter((item) => item.categorySlug !== product.categorySlug && item.id !== product.id)
     .slice(0, 4);
@@ -123,7 +126,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     "@type": "Product",
     name: product.name,
     description: product.description,
-    image: [`${baseUrl}${product.imageUrl.startsWith("/") ? product.imageUrl : `/${product.imageUrl}`}`],
+    image: product.images.map((image) => `${baseUrl}${image.url.startsWith("/") ? image.url : `/${image.url}`}`),
     brand: { "@type": "Brand", name: "Me & Mommy" },
     category: product.categoryName,
     offers: {
@@ -148,12 +151,21 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           <div className="relative overflow-hidden rounded-lg bg-brand-soft">
             <Image
               src={product.imageUrl}
-              alt={product.name}
+              alt={product.images[0]?.alt || product.name}
               width={900}
               height={760}
               priority
               className="aspect-[4/3] w-full object-cover"
             />
+            {product.images.length > 1 ? (
+              <div className="grid grid-cols-3 gap-2 bg-white p-2">
+                {product.images.slice(0, 3).map((image) => (
+                  <div key={image.url} className="relative aspect-[4/3] overflow-hidden rounded-md bg-sky-50">
+                    <Image src={image.url} alt={image.alt} fill sizes="160px" className="object-cover" />
+                  </div>
+                ))}
+              </div>
+            ) : null}
           </div>
           <div className="rounded-lg bg-white p-6 shadow-sm ring-1 ring-sky-100">
             <p className="text-sm font-black uppercase tracking-wide text-brand-dark">{product.categoryName}</p>
@@ -253,23 +265,30 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           </section>
         ) : null}
 
-        <section className="mt-14 overflow-hidden rounded-lg bg-slate-950 py-6 text-white">
-          <div className="px-6">
-            <p className="text-sm font-black uppercase tracking-wide text-sun">Video guides</p>
-            <h2 className="mt-2 text-2xl font-black">Quick routines parents can watch later</h2>
-          </div>
-          <div className="mt-6 flex w-max animate-[review-marquee_34s_linear_infinite] gap-4 px-6">
-            {[...videoGuides, ...videoGuides].map(([title, footnote], index) => (
-              <article key={`${title}-${index}`} className="w-[310px] shrink-0 rounded-lg bg-white/10 p-4 ring-1 ring-white/10">
-                <div className="grid aspect-video place-items-center rounded-lg bg-white/12 text-4xl font-black text-sun">
-                  Play
-                </div>
-                <h3 className="mt-3 font-black">{title}</h3>
-                <p className="mt-2 text-sm leading-6 text-slate-300">{footnote}</p>
-              </article>
-            ))}
-          </div>
-        </section>
+        {videoGuides.length ? (
+          <section className="mt-14 overflow-hidden rounded-lg bg-slate-950 py-6 text-white">
+            <div className="px-6">
+              <p className="text-sm font-black uppercase tracking-wide text-sun">Video guides</p>
+              <h2 className="mt-2 text-2xl font-black">Short routines parents can watch fast</h2>
+            </div>
+            <div className="mt-6 flex w-max animate-[review-marquee_34s_linear_infinite] gap-4 px-6">
+              {[...videoGuides, ...videoGuides].map((guide, index) => (
+                <article key={`${guide.id}-${index}`} className="w-[310px] shrink-0 rounded-lg bg-white/10 p-4 ring-1 ring-white/10">
+                  <a href={guide.url} target="_blank" rel="noreferrer" className="block">
+                    <div className="relative grid aspect-video place-items-center overflow-hidden rounded-lg bg-white/12 text-lg font-black text-sun">
+                      {guide.posterUrl ? (
+                        <Image src={guide.posterUrl} alt={guide.title} fill sizes="310px" className="object-cover opacity-70" />
+                      ) : null}
+                      <span className="relative rounded-full bg-slate-950/76 px-4 py-2">Play</span>
+                    </div>
+                  </a>
+                  <h3 className="mt-3 font-black">{guide.title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-slate-300">{guide.footnote}</p>
+                </article>
+              ))}
+            </div>
+          </section>
+        ) : null}
 
         <section className="mt-10 grid gap-6 lg:grid-cols-[1.25fr_.75fr]">
           <div className="rounded-lg bg-white p-6 shadow-sm ring-1 ring-sky-100">

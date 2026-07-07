@@ -19,7 +19,7 @@ const categorySchema = z.object({
   name: z.string().min(2),
   slug: z.string().min(2),
   description: z.string().min(8),
-  imageUrl: z.string().url().optional().or(z.literal("")),
+  imageUrl: z.string().min(1).optional().or(z.literal("")),
 });
 
 const productSchema = z.object({
@@ -32,8 +32,19 @@ const productSchema = z.object({
   salePrice: z.coerce.number().positive().optional().or(z.literal("")),
   discountLabel: z.string().optional(),
   stock: z.coerce.number().int().min(0),
-  imageUrl: z.string().url().optional().or(z.literal("")),
+  imageUrl: z.string().min(1).optional().or(z.literal("")),
+  imageUrls: z.string().optional(),
   featured: z.coerce.boolean().optional(),
+});
+
+const videoGuideSchema = z.object({
+  title: z.string().min(3),
+  footnote: z.string().min(8),
+  url: z.string().url(),
+  posterUrl: z.string().min(1).optional().or(z.literal("")),
+  productId: z.string().optional().or(z.literal("")),
+  sortOrder: z.coerce.number().int().min(0).optional(),
+  isActive: z.coerce.boolean().optional(),
 });
 
 const offerSchema = z.object({
@@ -63,6 +74,16 @@ export async function createCategory(formData: FormData) {
 export async function createProduct(formData: FormData) {
   await requireAdmin();
   const parsed = productSchema.parse(Object.fromEntries(formData));
+  const imageUrls = [
+    parsed.imageUrl,
+    ...(parsed.imageUrls || "")
+      .split(/[\n,]+/)
+      .map((value) => value.trim())
+      .filter(Boolean),
+  ]
+    .filter((value): value is string => Boolean(value))
+    .filter((value, index, values) => values.indexOf(value) === index);
+
   await getDb().product.create({
     data: {
       name: parsed.name,
@@ -75,15 +96,33 @@ export async function createProduct(formData: FormData) {
       discountLabel: parsed.discountLabel || null,
       stock: parsed.stock,
       featured: Boolean(parsed.featured),
-      images: parsed.imageUrl
+      images: imageUrls.length
         ? {
-            create: [{ url: parsed.imageUrl, alt: parsed.name, sortOrder: 1 }],
+            create: imageUrls.map((url, index) => ({ url, alt: parsed.name, sortOrder: index + 1 })),
           }
         : undefined,
     },
   });
   revalidatePath("/");
   revalidatePath("/admin/products");
+}
+
+export async function createVideoGuide(formData: FormData) {
+  await requireAdmin();
+  const parsed = videoGuideSchema.parse(Object.fromEntries(formData));
+  await getDb().videoGuide.create({
+    data: {
+      title: parsed.title,
+      footnote: parsed.footnote,
+      url: parsed.url,
+      posterUrl: parsed.posterUrl || null,
+      productId: parsed.productId || null,
+      sortOrder: parsed.sortOrder || 0,
+      isActive: Boolean(parsed.isActive),
+    },
+  });
+  revalidatePath("/");
+  revalidatePath("/admin/videos");
 }
 
 export async function updateOrderStatus(formData: FormData) {

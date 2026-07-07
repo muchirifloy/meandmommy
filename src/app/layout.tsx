@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     template: "%s | Me & Mommy",
   },
   description:
-    "Shop Me & Mommy breastmilk storage bags and sterilising tablets for safer expressing, milk storage, feeding, and bottle care routines in Kenya.",
+    "Shop Me & Mommy breastmilk storage bags, sterilising tablets, baby brushes, breast pump accessories, and cream care products for safer feeding routines in Kenya.",
   keywords: [
     "Me and Mommy",
     "Me & Mommy",
@@ -30,15 +30,28 @@ export const metadata: Metadata = {
     "sterilising tablets Kenya",
     "baby bottle sterilising tablets",
     "breast pump sterilising tablets",
+    "baby toothbrush Kenya",
+    "baby bottle brush Kenya",
+    "breast pump Kenya",
+    "breast pump accessories Kenya",
+    "baby cream Kenya",
     "expressed milk storage",
   ],
   openGraph: {
-    title: "Me & Mommy | Baby Care Essentials",
+    title: "Me & Mommy | Breastmilk Storage Bags, Sterilising Tablets & Baby Care Kenya",
     description:
-      "Breastmilk storage bags and sterilising tablets for clean, organised feeding routines.",
+      "Breastmilk storage bags, sterilising tablets, brushes, breast pump accessories, and cream care products for clean, organised parenting routines.",
     url: "/",
     siteName: "Me & Mommy",
     type: "website",
+    images: [{ url: "/images/hero/me-and-mommy-hero-products.webp", width: 1600, height: 900, alt: "Me & Mommy baby feeding essentials in Kenya" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Me & Mommy Baby Feeding & Care Essentials Kenya",
+    description:
+      "Shop breastmilk storage bags, sterilising tablets, brushes, pump accessories, and cream care products.",
+    images: ["/images/hero/me-and-mommy-hero-products.webp"],
   },
 };
 

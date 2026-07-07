@@ -12,8 +12,15 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://meandmommy.co.ke";
 
   return {
-    title: `${result.category.name} in Kenya | Me & Mommy`,
+    title: `Shop ${result.category.name} in Kenya`,
     description: result.category.description,
+    keywords: [
+      result.category.name,
+      `${result.category.name} Kenya`,
+      `${result.category.name} Nairobi`,
+      "Me & Mommy",
+      "baby essentials Kenya",
+    ],
     alternates: { canonical: `/category/${result.category.slug}` },
     openGraph: {
       title: `${result.category.name} | Me & Mommy`,

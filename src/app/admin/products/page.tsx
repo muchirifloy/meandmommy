@@ -6,7 +6,7 @@ export default async function AdminProductsPage() {
   const [categories, products] = db
     ? await Promise.all([
         db.category.findMany({ orderBy: { name: "asc" } }).catch(() => []),
-        db.product.findMany({ include: { category: true }, orderBy: { createdAt: "desc" }, take: 50 }).catch(() => []),
+        db.product.findMany({ include: { category: true, images: { orderBy: { sortOrder: "asc" } } }, orderBy: { createdAt: "desc" }, take: 50 }).catch(() => []),
       ])
     : [[], []];
 
@@ -39,7 +39,12 @@ export default async function AdminProductsPage() {
             <input name="discountLabel" placeholder="Discount label" className="rounded-lg border px-4 py-3" />
             <input name="stock" required type="number" placeholder="Stock" className="rounded-lg border px-4 py-3" />
           </div>
-          <input name="imageUrl" placeholder="Image URL" className="rounded-lg border px-4 py-3" />
+          <input name="imageUrl" placeholder="Primary image URL" className="rounded-lg border px-4 py-3" />
+          <textarea
+            name="imageUrls"
+            placeholder="More image URLs, one per line. These become the product gallery."
+            className="min-h-24 rounded-lg border px-4 py-3"
+          />
           <label className="flex items-center gap-2 text-sm font-bold">
             <input name="featured" type="checkbox" value="true" />
             Featured
@@ -51,7 +56,7 @@ export default async function AdminProductsPage() {
           {products.map((product) => (
             <div key={product.id} className="rounded-lg bg-white/10 p-4 ring-1 ring-white/10">
               <h2 className="font-black">{product.name}</h2>
-              <p className="text-sm text-slate-300">{product.category.name} · Stock {product.stock}</p>
+              <p className="text-sm text-slate-300">{product.category.name} - Stock {product.stock} - Images {product.images.length}</p>
             </div>
           ))}
         </div>
