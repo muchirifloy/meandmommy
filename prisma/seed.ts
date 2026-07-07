@@ -174,7 +174,8 @@ function slugify(value: string) {
     .replace(/^-|-$/g, "");
 }
 
-async function main() {
+export async function seedDatabase(db = prisma) {
+  const prisma = db;
   const adminEmail = process.env.SEED_ADMIN_EMAIL || "admin@meandmommy.co.ke";
   const adminPassword = process.env.SEED_ADMIN_PASSWORD || "Password";
 
@@ -308,12 +309,14 @@ async function main() {
   });
 }
 
-main()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async (error) => {
-    console.error(error);
-    await prisma.$disconnect();
-    process.exit(1);
-  });
+if (process.argv[1]?.replace(/\\/g, "/").endsWith("prisma/seed.ts")) {
+  seedDatabase()
+    .then(async () => {
+      await prisma.$disconnect();
+    })
+    .catch(async (error) => {
+      console.error(error);
+      await prisma.$disconnect();
+      process.exit(1);
+    });
+}
