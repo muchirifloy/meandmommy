@@ -1,0 +1,114 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fbfdff;
+  --foreground: #172033;
+  --brand: #55aee2;
+  --brand-dark: #1f7fb8;
+  --brand-soft: #e8f6ff;
+  --petal: #ffeaf1;
+  --mint: #e9fbf4;
+  --sun: #fff4cf;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-brand: var(--brand);
+  --color-brand-dark: var(--brand-dark);
+  --color-brand-soft: var(--brand-soft);
+  --color-petal: var(--petal);
+  --color-mint: var(--mint);
+  --color-sun: var(--sun);
+  --font-sans: "Geist", "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(85, 174, 226, 0.16), transparent 32rem),
+    linear-gradient(180deg, #fbfdff 0%, #ffffff 42%, #f6fbff 100%);
+  color: var(--foreground);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+.container-shell {
+  width: min(1180px, calc(100% - 24px));
+  margin-inline: auto;
+}
+
+@media (min-width: 768px) {
+  .container-shell {
+    width: min(1180px, calc(100% - 32px));
+  }
+}
+
+.soft-card {
+  border: 1px solid rgba(85, 174, 226, 0.18);
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 18px 60px rgba(23, 32, 51, 0.08);
+  backdrop-filter: blur(14px);
+}
+
+@keyframes review-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes hero-drift {
+  0%,
+  100% {
+    transform: scale(1.03) translate3d(0, 0, 0);
+  }
+  50% {
+    transform: scale(1.08) translate3d(-16px, 10px, 0);
+  }
+}
+
+.hero-mother-scene::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("/images/mother-child-hero.png");
+  background-position: center right;
+  background-size: cover;
+  opacity: 0.72;
+  animation: hero-drift 18s ease-in-out infinite;
+  transform-origin: center;
+  will-change: transform;
+}
+
+.hero-background-drift {
+  animation: hero-drift 18s ease-in-out infinite;
+}
+
+@media (max-width: 767px) {
+  .hero-mother-scene::before {
+    background-position: 62% center;
+    opacity: 0.46;
+  }
+}

@@ -1,0 +1,116 @@
+import { Prisma } from "@prisma/client";
+import { getDb } from "@/lib/db";
+import { seedCategories, seedProducts } from "@/lib/seed-data";
+
+type ProductWithImage = {
+  id: string;
+  name: string;
+  slug: string;
+  shortDescription: string;
+  description: string;
+  price: number;
+  salePrice: number | null;
+  discountLabel: string | null;
+  stock: number;
+  featured: boolean;
+  imageUrl: string;
+  categorySlug: string;
+  categoryName: string;
+};
+
+function money(value: Prisma.Decimal | number | null | undefined) {
+  if (value == null) return null;
+  return Number(value);
+}
+
+function fallbackProducts(): ProductWithImage[] {
+  return seedProducts.map((product) => {
+    const category = seedCategories.find((item) => item.slug === product.categorySlug);
+
+    return {
+      ...product,
+      salePrice: product.salePrice ?? null,
+      discountLabel: product.discountLabel ?? null,
+      categoryName: category?.name || "Me & Mommy",
+    };
+  });
+}
+
+async function dbProducts(): Promise<ProductWithImage[]> {
+  const db = getDb();
+  const products = await db.product.findMany({
+    where: { isActive: true },
+    include: {
+      category: true,
+      images: { orderBy: { sortOrder: "asc" }, take: 1 },
+    },
+    orderBy: [{ featured: "desc" }, { createdAt: "desc" }],
+  });
+
+  return products.map((product) => ({
+    id: product.id,
+    name: product.name,
+    slug: product.slug,
+    shortDescription: product.shortDescription,
+    description: product.description,
+    price: money(product.price) || 0,
+    salePrice: money(product.salePrice),
+    discountLabel: product.discountLabel,
+    stock: product.stock,
+    featured: product.featured,
+    imageUrl: product.images[0]?.url || product.category.imageUrl || "/images/me-and-mommy-logo.png",
+    categorySlug: product.category.slug,
+    categoryName: product.category.name,
+  }));
+}
+
+export async function getCatalog() {
+  try {
+    const db = getDb();
+    const [categories, products] = await Promise.all([
+      db.category.findMany({
+        where: { isActive: true },
+        orderBy: { sortOrder: "asc" },
+      }),
+      dbProducts(),
+    ]);
+
+    return {
+      categories: categories.map((category) => ({
+        name: category.name,
+        slug: category.slug,
+        description: category.description,
+        imageUrl: category.imageUrl || "/images/me-and-mommy-logo.png",
+      })),
+      products,
+    };
+  } catch {
+    return {
+      categories: seedCategories,
+      products: fallbackProducts(),
+    };
+  }
+}
+
+export async function getCategory(slug: string) {
+  const catalog = await getCatalog();
+  const category = catalog.categories.find((item) => item.slug === slug);
+
+  if (!category) return null;
+
+  return {
+    category,
+    products: catalog.products.filter((product) => product.categorySlug === slug),
+  };
+}
+
+export async function getProduct(slug: string) {
+  const catalog = await getCatalog();
+  return catalog.products.find((product) => product.slug === slug) || null;
+}
+
+export async function getFeaturedProducts() {
+  const catalog = await getCatalog();
+  return catalog.products.filter((product) => product.featured).slice(0, 8);
+}
+
