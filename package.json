@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build --webpack && node scripts/prepare-standalone.cjs",
+    "build:hostafrica": "node scripts/build-hostafrica.cjs",
     "start": "next start",
     "lint": "eslint",
     "test": "tsx --test tests/**/*.test.ts",
