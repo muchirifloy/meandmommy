@@ -178,14 +178,18 @@ export async function seedDatabase(db = prisma) {
   const prisma = db;
   const adminEmail = process.env.SEED_ADMIN_EMAIL || "admin@meandmommy.co.ke";
   const adminPassword = process.env.SEED_ADMIN_PASSWORD || "Password";
+  const adminPasswordHash = await bcrypt.hash(adminPassword, 12);
 
   await prisma.user.upsert({
     where: { email: adminEmail },
-    update: { role: Role.ADMIN },
+    update: {
+      role: Role.ADMIN,
+      ...(process.env.SEED_ADMIN_PASSWORD ? { passwordHash: adminPasswordHash } : {}),
+    },
     create: {
       name: process.env.SEED_ADMIN_NAME || "Me & Mommy Admin",
       email: adminEmail,
-      passwordHash: await bcrypt.hash(adminPassword, 12),
+      passwordHash: adminPasswordHash,
       role: Role.ADMIN,
     },
   });

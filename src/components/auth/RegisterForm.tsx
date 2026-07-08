@@ -57,7 +57,17 @@ export function RegisterForm() {
         <input name="name" required placeholder="Full name" className="rounded-lg border border-sky-100 px-4 py-3 outline-none focus:border-brand" />
         <input name="email" type="email" required placeholder="Email" className="rounded-lg border border-sky-100 px-4 py-3 outline-none focus:border-brand" />
         <input name="phone" placeholder="Phone number" className="rounded-lg border border-sky-100 px-4 py-3 outline-none focus:border-brand" />
-        <input name="password" type="password" required minLength={8} placeholder="Password" className="rounded-lg border border-sky-100 px-4 py-3 outline-none focus:border-brand" />
+        <input
+          name="password"
+          type="password"
+          required
+          minLength={8}
+          pattern="(?=.*[A-Za-z])(?=.*[0-9]).{8,}"
+          title="Use at least 8 characters with a letter and a number."
+          placeholder="Password"
+          className="rounded-lg border border-sky-100 px-4 py-3 outline-none focus:border-brand"
+        />
+        <p className="-mt-2 text-xs font-semibold text-slate-500">Use at least 8 characters with a letter and a number.</p>
         {error ? <p className="text-sm font-bold text-red-600">{error}</p> : null}
         <button disabled={loading} className="rounded-full bg-brand px-5 py-3 font-black text-white hover:bg-brand-dark disabled:opacity-60">
           {loading ? <BrandLoader label="Creating account..." /> : "Create Account"}
