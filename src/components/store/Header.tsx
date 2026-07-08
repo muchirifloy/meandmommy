@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Search, UserRound } from "lucide-react";
 import { getServerSession } from "next-auth";
+import { LogoutButton } from "@/components/auth/LogoutButton";
 import { CustomerBottomNav } from "@/components/store/CustomerBottomNav";
 import { HeaderChrome } from "@/components/store/HeaderChrome";
 import { HeaderCartLink } from "@/components/store/HeaderCartLink";
@@ -55,7 +56,7 @@ export async function Header() {
           </form>
 
           <div className="ml-auto flex items-center gap-1 sm:gap-2">
-            <HeaderMobileControls categories={categories} />
+            <HeaderMobileControls categories={categories} signedIn={Boolean(session)} />
             <Link
               href={session ? "/account" : "/login"}
               className="inline-flex h-10 items-center justify-center rounded-full px-2.5 text-white transition hover:bg-sun hover:text-slate-950 sm:gap-2 sm:px-3"
@@ -64,6 +65,11 @@ export async function Header() {
               <span className="hidden text-sm font-black xl:inline">{session ? "Account" : "Login"}</span>
             </Link>
             <HeaderCartLink />
+            {session ? (
+              <div className="hidden xl:block">
+                <LogoutButton compact onDark />
+              </div>
+            ) : null}
           </div>
         </div>
       </HeaderChrome>

@@ -3,15 +3,17 @@
 import Link from "next/link";
 import { Menu, Search, X } from "lucide-react";
 import { useState } from "react";
+import { LogoutButton } from "@/components/auth/LogoutButton";
 
 type HeaderMobileControlsProps = {
   categories: Array<{
     name: string;
     slug: string;
   }>;
+  signedIn?: boolean;
 };
 
-export function HeaderMobileControls({ categories }: HeaderMobileControlsProps) {
+export function HeaderMobileControls({ categories, signedIn = false }: HeaderMobileControlsProps) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -69,6 +71,20 @@ export function HeaderMobileControls({ categories }: HeaderMobileControlsProps) 
         <Link href="/videos" className="rounded-lg px-3 py-2 transition hover:bg-sun hover:text-slate-950">
           Videos
         </Link>
+        {signedIn ? (
+          <>
+            <Link href="/account" className="rounded-lg px-3 py-2 transition hover:bg-sun hover:text-slate-950">
+              My Dashboard
+            </Link>
+            <div className="border-t border-white/10 pt-2">
+              <LogoutButton compact onDark />
+            </div>
+          </>
+        ) : (
+          <Link href="/login" className="rounded-lg px-3 py-2 transition hover:bg-sun hover:text-slate-950">
+            Login
+          </Link>
+        )}
       </nav>
     </>
   );
