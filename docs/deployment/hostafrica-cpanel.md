@@ -25,6 +25,8 @@ In cPanel **Git Version Control**:
 
 If the GitHub repo is private, add the cPanel SSH public key to GitHub as a deploy key.
 
+If `git pull origin main` says `fatal: not a git repository`, you are inside the domain folder, not the cloned repo folder. Either open the actual path shown in cPanel Git Version Control, or clone the repo into the Node application root before running build commands.
+
 ## 3. Configure Node.js app
 
 In cPanel **Setup Node.js App**:
@@ -76,13 +78,13 @@ Open cPanel **Terminal**, then run:
 
 ```bash
 cd ~/apps/meandmommy
-corepack enable
-corepack prepare pnpm@latest --activate
-pnpm install --frozen-lockfile
-pnpm db:generate
-pnpm build
-pnpm db:push
+npx pnpm@latest install --frozen-lockfile
+npx pnpm@latest db:generate
+npx pnpm@latest build
+npx pnpm@latest db:push
 ```
+
+Some HostAfrica/cPanel shells do not provide `corepack` or a global `pnpm`. Use `npx pnpm@latest ...` in that case.
 
 `pnpm build` creates a Next.js standalone server and copies `public` plus `.next/static` into the standalone output for cPanel hosting.
 
@@ -98,7 +100,7 @@ If HostAfrica still returns `EAGAIN`, stop extra Node processes from cPanel **Se
 The database should already have data, but if you need to seed/reset starter content:
 
 ```bash
-SEED_ADMIN_EMAIL=admin@meandmommy.co.ke SEED_ADMIN_PASSWORD='CHANGE_THIS' pnpm db:seed
+SEED_ADMIN_EMAIL=admin@meandmommy.co.ke SEED_ADMIN_PASSWORD='CHANGE_THIS' npx pnpm@latest db:seed
 ```
 
 ## 6. Start or restart the app
