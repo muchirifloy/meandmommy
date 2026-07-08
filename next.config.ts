@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
+  output: "standalone",
   allowedDevOrigins: ["127.0.0.1", "169.254.123.150"],
   images: {},
   async headers() {
