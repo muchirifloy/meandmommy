@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Role } from "@prisma/client";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import {
@@ -40,6 +41,7 @@ function friendlyStatus(status: string) {
 export default async function AccountPage() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) redirect("/login?callbackUrl=/account");
+  if (session.user.role === Role.ADMIN || session.user.role === Role.SUPPORT) redirect("/admin");
 
   const db = getOptionalDb();
   const [{ categories }, featuredProducts, homeOffer, cart, orders] = await Promise.all([

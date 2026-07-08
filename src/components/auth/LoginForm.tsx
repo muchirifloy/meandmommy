@@ -25,6 +25,11 @@ export function LoginForm() {
     });
 
     if (result?.ok) {
+      const session = await fetch("/api/auth/session").then((response) => response.json()).catch(() => null);
+      if (session?.user?.role === "ADMIN" || session?.user?.role === "SUPPORT") {
+        window.location.href = "/admin";
+        return;
+      }
       await mergeGuestCart();
       window.location.href = result.url || nextUrl;
       return;

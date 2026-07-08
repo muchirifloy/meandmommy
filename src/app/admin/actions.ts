@@ -23,6 +23,7 @@ const categorySchema = z.object({
 });
 
 const productSchema = z.object({
+  id: z.string().optional(),
   name: z.string().min(2),
   slug: z.string().min(2),
   categoryId: z.string().min(1),
@@ -36,6 +37,44 @@ const productSchema = z.object({
   imageUrls: z.string().optional(),
   featured: z.coerce.boolean().optional(),
 });
+
+async function uploadedImageDataUrls(formData: FormData) {
+  const files = formData
+    .getAll("images")
+    .filter((value): value is File => value instanceof File && value.size > 0);
+
+  const allowedTypes = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
+  const maxBytes = 1024 * 1024;
+
+  return Promise.all(
+    files.slice(0, 6).map(async (file) => {
+      if (!allowedTypes.has(file.type)) {
+        throw new Error("Only JPEG, PNG, WEBP, or GIF product images are allowed.");
+      }
+
+      if (file.size > maxBytes) {
+        throw new Error("Each product image must be 1MB or smaller.");
+      }
+
+      const buffer = Buffer.from(await file.arrayBuffer());
+      return `data:${file.type};base64,${buffer.toString("base64")}`;
+    }),
+  );
+}
+
+async function productImageUrls(formData: FormData, parsed: z.infer<typeof productSchema>) {
+  const uploaded = await uploadedImageDataUrls(formData);
+  return [
+    parsed.imageUrl,
+    ...(parsed.imageUrls || "")
+      .split(/[\n,]+/)
+      .map((value) => value.trim())
+      .filter(Boolean),
+    ...uploaded,
+  ]
+    .filter((value): value is string => Boolean(value))
+    .filter((value, index, values) => values.indexOf(value) === index);
+}
 
 const videoGuideSchema = z.object({
   title: z.string().min(3),
@@ -74,15 +113,7 @@ export async function createCategory(formData: FormData) {
 export async function createProduct(formData: FormData) {
   await requireAdmin();
   const parsed = productSchema.parse(Object.fromEntries(formData));
-  const imageUrls = [
-    parsed.imageUrl,
-    ...(parsed.imageUrls || "")
-      .split(/[\n,]+/)
-      .map((value) => value.trim())
-      .filter(Boolean),
-  ]
-    .filter((value): value is string => Boolean(value))
-    .filter((value, index, values) => values.indexOf(value) === index);
+  const imageUrls = await productImageUrls(formData, parsed);
 
   await getDb().product.create({
     data: {
@@ -103,6 +134,48 @@ export async function createProduct(formData: FormData) {
         : undefined,
     },
   });
+  revalidatePath("/");
+  revalidatePath("/admin/products");
+}
+
+export async function updateProduct(formData: FormData) {
+  await requireAdmin();
+  const parsed = productSchema.parse(Object.fromEntries(formData));
+  if (!parsed.id) throw new Error("Product id is required.");
+  const imageUrls = await productImageUrls(formData, parsed);
+
+  await getDb().product.update({
+    where: { id: parsed.id },
+    data: {
+      name: parsed.name,
+      slug: parsed.slug,
+      categoryId: parsed.categoryId,
+      shortDescription: parsed.shortDescription,
+      description: parsed.description,
+      price: parsed.price,
+      salePrice: parsed.salePrice === "" ? null : parsed.salePrice,
+      discountLabel: parsed.discountLabel || null,
+      stock: parsed.stock,
+      featured: Boolean(parsed.featured),
+      isActive: true,
+      ...(imageUrls.length
+        ? {
+            images: {
+              deleteMany: {},
+              create: imageUrls.map((url, index) => ({ url, alt: parsed.name, sortOrder: index + 1 })),
+            },
+          }
+        : {}),
+    },
+  });
+  revalidatePath("/");
+  revalidatePath("/admin/products");
+}
+
+export async function archiveProduct(formData: FormData) {
+  await requireAdmin();
+  const id = String(formData.get("id") || "");
+  await getDb().product.update({ where: { id }, data: { isActive: false, featured: false } });
   revalidatePath("/");
   revalidatePath("/admin/products");
 }

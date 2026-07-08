@@ -68,6 +68,7 @@ export function ProductCard({ product }: ProductCardProps) {
             fill
             sizes="(max-width: 768px) 50vw, 240px"
             className="object-cover transition duration-500 group-hover:scale-105"
+            unoptimized={product.imageUrl.startsWith("data:")}
           />
           {product.discountLabel ? (
             <span className="absolute left-2 top-2 rounded bg-white px-2 py-1 text-[11px] font-black text-brand-dark shadow">

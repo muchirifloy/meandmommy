@@ -116,12 +116,13 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
               height={760}
               priority
               className="aspect-[4/3] w-full object-cover"
+              unoptimized={product.imageUrl.startsWith("data:")}
             />
             {product.images.length > 1 ? (
               <div className="grid grid-cols-3 gap-2 bg-white p-2">
                 {product.images.slice(0, 3).map((image) => (
                   <div key={image.url} className="relative aspect-[4/3] overflow-hidden rounded-md bg-sky-50">
-                    <Image src={image.url} alt={image.alt} fill sizes="160px" className="object-cover" />
+                    <Image src={image.url} alt={image.alt} fill sizes="160px" className="object-cover" unoptimized={image.url.startsWith("data:")} />
                   </div>
                 ))}
               </div>
