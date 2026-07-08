@@ -1,7 +1,6 @@
 import Link from "next/link";
 import {
   AlertTriangle,
-  BarChart3,
   Boxes,
   CheckCircle2,
   Clock3,
@@ -38,7 +37,24 @@ function miniBars(values: number[], color: string) {
   );
 }
 
-export default async function AdminPage() {
+function analyticsStart(period: string) {
+  const date = new Date();
+  if (period === "day") return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  if (period === "week") {
+    const start = new Date(date);
+    start.setDate(date.getDate() - 6);
+    start.setHours(0, 0, 0, 0);
+    return start;
+  }
+  return startOfMonth(0);
+}
+
+export default async function AdminPage({ searchParams }: { searchParams: Promise<{ orderPeriod?: string; productPeriod?: string }> }) {
+  const params = await searchParams;
+  const orderPeriod = params.orderPeriod || "week";
+  const productPeriod = params.productPeriod || "month";
+  const orderAnalyticsStart = analyticsStart(orderPeriod);
+  const productAnalyticsStart = analyticsStart(productPeriod);
   const stats = {
     products: 0,
     categories: 0,
@@ -54,6 +70,8 @@ export default async function AdminPage() {
     lowStockProducts: [] as Array<{ name: string; stock: number }>,
     recentOrders: [] as Array<{ orderNumber: string; customerName: string; status: string; total: unknown }>,
     recentLogs: [] as Array<{ action: string; entity: string; createdAt: Date }>,
+    orderChart: [] as Array<{ label: string; total: number }>,
+    productSalesChart: [] as Array<{ label: string; total: number }>,
   };
 
   try {
@@ -78,6 +96,8 @@ export default async function AdminPage() {
       lowStockProducts,
       recentOrders,
       recentLogs,
+      analyticsOrders,
+      analyticsItems,
     ] = await Promise.all([
       db.product.count(),
       db.category.count(),
@@ -99,6 +119,12 @@ export default async function AdminPage() {
       db.product.findMany({ where: { stock: { lte: 10 } }, select: { name: true, stock: true }, orderBy: { stock: "asc" }, take: 8 }),
       db.order.findMany({ select: { orderNumber: true, customerName: true, status: true, total: true }, orderBy: { createdAt: "desc" }, take: 5 }),
       db.auditLog.findMany({ select: { action: true, entity: true, createdAt: true }, orderBy: { createdAt: "desc" }, take: 5 }),
+      db.order.findMany({ where: { createdAt: { gte: orderAnalyticsStart }, status: { not: "CANCELLED" } }, select: { createdAt: true, total: true }, orderBy: { createdAt: "asc" } }),
+      db.orderItem.findMany({
+        where: { order: { createdAt: { gte: productAnalyticsStart }, status: { not: "CANCELLED" } } },
+        include: { order: { select: { createdAt: true } } },
+        take: 500,
+      }),
     ]);
 
     const sellerMap = new Map<string, { name: string; quantity: number; revenue: number }>();
@@ -124,6 +150,20 @@ export default async function AdminPage() {
       lowStockProducts,
       recentOrders,
       recentLogs,
+      orderChart: analyticsOrders.map((order) => ({
+        label: order.createdAt.toLocaleDateString("en-KE", { month: "short", day: "numeric" }),
+        total: Number(order.total),
+      })),
+      productSalesChart: Array.from(
+        analyticsItems.reduce((map, item) => {
+          const existing = map.get(item.name) || 0;
+          map.set(item.name, existing + item.quantity);
+          return map;
+        }, new Map<string, number>()),
+      )
+        .map(([label, total]) => ({ label, total }))
+        .sort((a, b) => b.total - a.total)
+        .slice(0, 8),
     });
   } catch {
     // Keep dashboard renderable during first deployment or database maintenance.
@@ -140,15 +180,6 @@ export default async function AdminPage() {
     { label: "Orders", value: stats.orders, note: "Track purchase to delivery", icon: ShoppingCart, color: "bg-[#4285f4]", bars: [3, 7, 4, 8, 9, 5, 10] },
     { label: "Customers", value: stats.customers, note: "Profiles and purchase history", icon: Users, color: "bg-emerald-500", bars: [5, 5, 7, 6, 9, 10, 8] },
     { label: "Low Stock", value: stats.lowStock, note: "Needs attention", icon: AlertTriangle, color: "bg-rose-500", bars: [9, 7, 8, 4, 5, 3, 2] },
-  ];
-
-  const capabilityGroups = [
-    ["Product Management", "Add/edit/archive products, upload multiple images, feature items, schedule sale pricing, manage stock and category assignment."],
-    ["Order Management", "Update delivery status, verify payments, process cancellations, and prepare invoice/packing slip workflows."],
-    ["Customer Management", "Review customer profiles, addresses, order history, coupons, support tickets, and promotional targeting."],
-    ["Inventory Management", "Monitor low stock, stock-on-hand, adjustments, automatic sales deductions, and future warehouse controls."],
-    ["User & Staff Management", "Create staff through members, assign roles, control admin access, and review activity logs."],
-    ["Content & Settings", "Manage offers, videos, homepage content, email campaigns, branding, payment, security, backups, and audit controls."],
   ];
 
   return (
@@ -190,6 +221,60 @@ export default async function AdminPage() {
             </article>
           );
         })}
+      </div>
+
+      <div className="grid gap-5 xl:grid-cols-2">
+        <div className="rounded-lg bg-white p-5 shadow-sm ring-1 ring-slate-200">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 className="text-lg font-black text-slate-950">Orders graph</h2>
+            <form className="flex gap-2">
+              <select name="orderPeriod" defaultValue={orderPeriod} className="rounded-md border border-slate-200 px-3 py-2 text-sm">
+                <option value="day">Day</option>
+                <option value="week">Week</option>
+                <option value="month">Month</option>
+              </select>
+              <input type="hidden" name="productPeriod" value={productPeriod} />
+              <button className="rounded-md bg-[#4285f4] px-3 py-2 text-sm font-black text-white">Apply</button>
+            </form>
+          </div>
+          <div className="mt-5 flex h-48 items-end gap-2 overflow-x-auto border-b border-slate-100 pb-2">
+            {stats.orderChart.length ? stats.orderChart.map((item, index) => (
+              <div key={`${item.label}-${index}`} className="grid min-w-10 justify-items-center gap-2 text-[10px] font-bold text-slate-400">
+                <span className="w-7 rounded-t bg-[#4285f4]" style={{ height: `${Math.max(12, item.total / Math.max(stats.currentMonthSales, 1) * 160)}px` }} />
+                <span>{item.label}</span>
+              </div>
+            )) : <p className="text-sm text-slate-500">No orders in this period.</p>}
+          </div>
+        </div>
+
+        <div className="rounded-lg bg-white p-5 shadow-sm ring-1 ring-slate-200">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 className="text-lg font-black text-slate-950">Product sales graph</h2>
+            <form className="flex gap-2">
+              <input type="hidden" name="orderPeriod" value={orderPeriod} />
+              <select name="productPeriod" defaultValue={productPeriod} className="rounded-md border border-slate-200 px-3 py-2 text-sm">
+                <option value="day">Day</option>
+                <option value="week">Week</option>
+                <option value="month">Month</option>
+              </select>
+              <button className="rounded-md bg-[#4285f4] px-3 py-2 text-sm font-black text-white">Apply</button>
+            </form>
+          </div>
+          <div className="mt-5 grid gap-3">
+            {stats.productSalesChart.map((item) => (
+              <div key={item.label} className="grid grid-cols-[1fr_70px] items-center gap-3 text-sm">
+                <div>
+                  <p className="line-clamp-1 font-bold text-slate-700">{item.label}</p>
+                  <span className="mt-1 block h-2 rounded-full bg-slate-100">
+                    <span className="block h-2 rounded-full bg-emerald-500" style={{ width: `${Math.min(100, item.total * 12)}%` }} />
+                  </span>
+                </div>
+                <strong>{item.total} sold</strong>
+              </div>
+            ))}
+            {!stats.productSalesChart.length ? <p className="text-sm text-slate-500">No product sales in this period.</p> : null}
+          </div>
+        </div>
       </div>
 
       <div className="grid gap-5 xl:grid-cols-[1.25fr_1fr]">
@@ -268,21 +353,6 @@ export default async function AdminPage() {
             ))}
             {!stats.bestSellers.length ? <p className="text-sm text-slate-500">Sales will appear after orders are placed.</p> : null}
           </div>
-        </div>
-      </div>
-
-      <div id="content" className="rounded-lg bg-white p-5 shadow-sm ring-1 ring-slate-200">
-        <div className="flex items-center gap-2">
-          <BarChart3 className="h-5 w-5 text-[#4285f4]" />
-          <h2 className="text-lg font-black text-slate-950">Management Coverage</h2>
-        </div>
-        <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-          {capabilityGroups.map(([title, body]) => (
-            <div key={title} className="rounded-lg border border-slate-100 bg-slate-50 p-4">
-              <h3 className="font-black text-slate-950">{title}</h3>
-              <p className="mt-2 text-sm leading-6 text-slate-500">{body}</p>
-            </div>
-          ))}
         </div>
       </div>
     </section>

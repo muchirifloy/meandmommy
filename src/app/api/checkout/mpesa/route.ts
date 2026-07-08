@@ -6,6 +6,7 @@ import { getCart } from "@/lib/cart";
 import { getDb } from "@/lib/db";
 import { normalizeMpesaPhone, requestStkPush } from "@/lib/mpesa";
 import { validateVoucher } from "@/lib/offers";
+import { calculateTax, getStoreSettings } from "@/lib/settings";
 import { checkoutSchema } from "@/lib/validation";
 
 function orderNumber() {
@@ -41,7 +42,10 @@ export async function POST(request: Request) {
   const db = getDb();
   const number = orderNumber();
   const deliveryAddress = `${parsed.data.address}, ${parsed.data.city}`;
-  const total = Math.max(0, cart.subtotal - voucher.discount);
+  const settings = await getStoreSettings();
+  const taxableSubtotal = Math.max(0, cart.subtotal - voucher.discount);
+  const tax = calculateTax(taxableSubtotal, settings);
+  const total = taxableSubtotal + tax;
 
   const order = await db.order.create({
     data: {

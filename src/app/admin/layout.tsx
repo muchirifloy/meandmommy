@@ -46,7 +46,7 @@ const groups = [
   {
     label: "Customers",
     links: [
-      { label: "Members", href: "/admin/members", icon: Users },
+      { label: "Users", href: "/admin/members", icon: Users },
       { label: "Support", href: "/admin/support", icon: Headphones },
       { label: "Reviews", href: "/admin/reviews", icon: ShieldCheck },
       { label: "Emails", href: "/admin/campaigns", icon: Mail },
@@ -68,15 +68,15 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   return (
     <div className="min-h-screen bg-[#eef3fb] text-slate-950">
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-72 border-r border-slate-200 bg-white shadow-sm lg:block">
-        <div className="flex h-16 items-center justify-between border-b border-slate-100 px-5">
-          <Link href="/admin" className="text-2xl font-black text-[#4285f4]">Me & Mommy</Link>
-          <span className="rounded-full bg-[#4285f4]/10 px-2 py-1 text-[11px] font-black text-[#4285f4]">Admin</span>
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-60 border-r border-slate-200 bg-white shadow-sm lg:block">
+        <div className="flex h-14 items-center justify-between border-b border-slate-100 px-4">
+          <Link href="/admin" className="text-lg font-black text-[#4285f4]">Me & Mommy</Link>
+          <span className="rounded-full bg-[#4285f4]/10 px-2 py-0.5 text-[10px] font-black text-[#4285f4]">Admin</span>
         </div>
-        <nav className="h-[calc(100vh-4rem)] overflow-y-auto px-4 py-5">
+        <nav className="h-[calc(100vh-3.5rem)] overflow-y-auto px-3 py-4">
           {groups.map((group) => (
-            <div key={group.label} className="mb-6">
-              <p className="mb-2 px-2 text-[11px] font-black uppercase tracking-wide text-slate-400">{group.label}</p>
+            <div key={group.label} className="mb-4">
+              <p className="mb-1.5 px-2 text-[10px] font-black uppercase tracking-wide text-slate-400">{group.label}</p>
               <div className="grid gap-1">
                 {group.links.map((link) => {
                   const Icon = link.icon;
@@ -84,9 +84,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                     <Link
                       key={link.href}
                       href={link.href}
-                      className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-bold text-slate-600 transition hover:bg-[#4285f4] hover:text-white"
+                      className="flex items-center gap-2.5 rounded-md px-2.5 py-2 text-[13px] font-bold text-slate-600 transition hover:bg-[#4285f4] hover:text-white"
                     >
-                      <Icon className="h-4 w-4" />
+                      <Icon className="h-3.5 w-3.5" />
                       {link.label}
                     </Link>
                   );
@@ -97,14 +97,14 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         </nav>
       </aside>
 
-      <header className="sticky top-0 z-20 bg-[#4285f4] text-white shadow-sm lg:pl-72">
-        <div className="flex min-h-16 items-center justify-between gap-4 px-4 sm:px-6">
+      <header className="sticky top-0 z-20 bg-[#4285f4] text-white shadow-sm lg:pl-60">
+        <div className="flex min-h-14 items-center justify-between gap-4 px-4 sm:px-5">
           <div>
             <p className="text-xs font-black uppercase tracking-wide text-white/70">Admin Panel</p>
             <h1 className="text-lg font-black">Store command center</h1>
           </div>
           <div className="flex items-center gap-3">
-            <Link href="/" className="hidden rounded-full bg-white/12 px-4 py-2 text-sm font-black hover:bg-white/20 sm:inline-flex">
+            <Link href="/" target="_blank" rel="noreferrer" className="hidden rounded-full bg-white/12 px-4 py-2 text-sm font-black hover:bg-white/20 sm:inline-flex">
               View Store
             </Link>
             <span className="hidden text-sm font-bold text-white/80 md:inline">{session.user.email}</span>
@@ -113,8 +113,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         </div>
       </header>
 
-      <main className="lg:pl-72">
-        <div className="mx-auto w-full max-w-[1380px] px-4 py-6 sm:px-6">{children}</div>
+      <main className="lg:pl-60">
+        <div className="mx-auto w-full max-w-[1440px] px-4 py-5 sm:px-5">{children}</div>
       </main>
     </div>
   );

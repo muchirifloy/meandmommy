@@ -167,7 +167,7 @@ model Product {
 model ProductImage {
   id        String @id @default(cuid())
   productId String
-  url       String @db.Text
+  url       String @db.LongText
   alt       String
   sortOrder Int    @default(0)
 
@@ -304,13 +304,32 @@ model SupportTicket {
   userId    String?
   name      String
   email     String
+  category  String       @default("GENERAL")
   subject   String
   message   String       @db.Text
+  reply     String?      @db.Text
   status    TicketStatus @default(OPEN)
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
 
   user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+model StoreSetting {
+  id              String   @id @default("store")
+  storeName       String   @default("Me & Mommy")
+  supportEmail    String   @default("info@meandmommy.co.ke")
+  supportPhone    String   @default("+254 724 736495")
+  location        String   @default("Nairobi, Kenya")
+  paymentMethod   String   @default("M-Pesa Express")
+  taxEnabled      Boolean  @default(false)
+  taxPercentage   Decimal  @default(0) @db.Decimal(5, 2)
+  logoUrl         String?  @db.LongText
+  faviconUrl      String?  @db.LongText
+  adminTwoFactor  Boolean  @default(false)
+  staffTwoFactor  Boolean  @default(false)
+  customerTwoFactor Boolean @default(false)
+  updatedAt       DateTime @updatedAt
 }
 
 model Review {

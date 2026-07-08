@@ -16,10 +16,13 @@ async function requireAdmin() {
 }
 
 const categorySchema = z.object({
+  id: z.string().optional(),
   name: z.string().min(2),
   slug: z.string().min(2),
   description: z.string().min(8),
   imageUrl: z.string().min(1).optional().or(z.literal("")),
+  sortOrder: z.coerce.number().int().min(0).optional(),
+  isActive: z.coerce.boolean().optional(),
 });
 
 const productSchema = z.object({
@@ -62,6 +65,16 @@ async function uploadedImageDataUrls(formData: FormData) {
   );
 }
 
+async function uploadedSingleImageDataUrl(formData: FormData, field: string) {
+  const file = formData.get(field);
+  if (!(file instanceof File) || file.size === 0) return null;
+  const allowedTypes = new Set(["image/jpeg", "image/png", "image/webp", "image/gif", "image/x-icon"]);
+  if (!allowedTypes.has(file.type)) throw new Error("Only image files are allowed.");
+  if (file.size > 1024 * 1024) throw new Error("Brand images must be 1MB or smaller.");
+  const buffer = Buffer.from(await file.arrayBuffer());
+  return `data:${file.type};base64,${buffer.toString("base64")}`;
+}
+
 async function productImageUrls(formData: FormData, parsed: z.infer<typeof productSchema>) {
   const uploaded = await uploadedImageDataUrls(formData);
   return [
@@ -97,6 +110,21 @@ const offerSchema = z.object({
   showOnHome: z.coerce.boolean().optional(),
 });
 
+const settingSchema = z.object({
+  storeName: z.string().min(2),
+  supportEmail: z.string().email(),
+  supportPhone: z.string().min(6),
+  location: z.string().min(2),
+  paymentMethod: z.string().min(2),
+  taxEnabled: z.coerce.boolean().optional(),
+  taxPercentage: z.coerce.number().min(0).max(100),
+  logoUrl: z.string().optional().or(z.literal("")),
+  faviconUrl: z.string().optional().or(z.literal("")),
+  adminTwoFactor: z.coerce.boolean().optional(),
+  staffTwoFactor: z.coerce.boolean().optional(),
+  customerTwoFactor: z.coerce.boolean().optional(),
+});
+
 export async function createCategory(formData: FormData) {
   await requireAdmin();
   const parsed = categorySchema.parse(Object.fromEntries(formData));
@@ -106,6 +134,33 @@ export async function createCategory(formData: FormData) {
       imageUrl: parsed.imageUrl || null,
     },
   });
+  revalidatePath("/");
+  revalidatePath("/admin/categories");
+}
+
+export async function updateCategory(formData: FormData) {
+  await requireAdmin();
+  const parsed = categorySchema.parse(Object.fromEntries(formData));
+  if (!parsed.id) throw new Error("Category id is required.");
+  await getDb().category.update({
+    where: { id: parsed.id },
+    data: {
+      name: parsed.name,
+      slug: parsed.slug,
+      description: parsed.description,
+      imageUrl: parsed.imageUrl || null,
+      sortOrder: parsed.sortOrder || 0,
+      isActive: Boolean(parsed.isActive),
+    },
+  });
+  revalidatePath("/");
+  revalidatePath("/admin/categories");
+}
+
+export async function archiveCategory(formData: FormData) {
+  await requireAdmin();
+  const id = String(formData.get("id") || "");
+  await getDb().category.update({ where: { id }, data: { isActive: false } });
   revalidatePath("/");
   revalidatePath("/admin/categories");
 }
@@ -223,7 +278,12 @@ export async function updateTicketStatus(formData: FormData) {
   await requireAdmin();
   const id = String(formData.get("id") || "");
   const status = String(formData.get("status") || "OPEN");
-  await getDb().supportTicket.update({ where: { id }, data: { status: status as never } });
+  const category = String(formData.get("category") || "GENERAL");
+  const reply = String(formData.get("reply") || "");
+  await getDb().supportTicket.update({
+    where: { id },
+    data: { status: status as never, category, reply: reply || null },
+  });
   revalidatePath("/admin/support");
 }
 
@@ -361,4 +421,51 @@ export async function emailTicketReport() {
     text: `Support ticket report\nOpen: ${open}\nIn progress: ${inProgress}\nResolved: ${resolved}\nClosed: ${closed}`,
     html: `<h2 style="margin:0 0 12px;">Customer Support Report</h2><p><strong>Open:</strong> ${open}</p><p><strong>In progress:</strong> ${inProgress}</p><p><strong>Resolved:</strong> ${resolved}</p><p><strong>Closed:</strong> ${closed}</p>`,
   });
+}
+
+export async function updateStoreSettings(formData: FormData) {
+  await requireAdmin();
+  const parsed = settingSchema.parse(Object.fromEntries(formData));
+  const [logoUpload, faviconUpload] = await Promise.all([
+    uploadedSingleImageDataUrl(formData, "logoFile"),
+    uploadedSingleImageDataUrl(formData, "faviconFile"),
+  ]);
+  const existing = await getDb().storeSetting.findUnique({ where: { id: "store" } });
+  const logoUrl = logoUpload || parsed.logoUrl || existing?.logoUrl || null;
+  const faviconUrl = faviconUpload || parsed.faviconUrl || existing?.faviconUrl || null;
+  await getDb().storeSetting.upsert({
+    where: { id: "store" },
+    update: {
+      storeName: parsed.storeName,
+      supportEmail: parsed.supportEmail,
+      supportPhone: parsed.supportPhone,
+      location: parsed.location,
+      paymentMethod: parsed.paymentMethod,
+      taxEnabled: Boolean(parsed.taxEnabled),
+      taxPercentage: parsed.taxPercentage,
+      logoUrl,
+      faviconUrl,
+      adminTwoFactor: Boolean(parsed.adminTwoFactor),
+      staffTwoFactor: Boolean(parsed.staffTwoFactor),
+      customerTwoFactor: Boolean(parsed.customerTwoFactor),
+    },
+    create: {
+      storeName: parsed.storeName,
+      supportEmail: parsed.supportEmail,
+      supportPhone: parsed.supportPhone,
+      location: parsed.location,
+      paymentMethod: parsed.paymentMethod,
+      taxEnabled: Boolean(parsed.taxEnabled),
+      taxPercentage: parsed.taxPercentage,
+      logoUrl,
+      faviconUrl,
+      adminTwoFactor: Boolean(parsed.adminTwoFactor),
+      staffTwoFactor: Boolean(parsed.staffTwoFactor),
+      customerTwoFactor: Boolean(parsed.customerTwoFactor),
+    },
+  });
+  revalidatePath("/");
+  revalidatePath("/cart");
+  revalidatePath("/checkout");
+  revalidatePath("/admin/settings");
 }

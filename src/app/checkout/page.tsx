@@ -5,6 +5,7 @@ import { Footer } from "@/components/store/Footer";
 import { Header } from "@/components/store/Header";
 import { authOptions } from "@/lib/auth";
 import { getCart } from "@/lib/cart";
+import { calculateTax, getStoreSettings } from "@/lib/settings";
 
 function formatPrice(value: number) {
   return new Intl.NumberFormat("en-KE", {
@@ -17,6 +18,9 @@ function formatPrice(value: number) {
 export default async function CheckoutPage() {
   const session = await getServerSession(authOptions);
   const cart = session?.user?.id ? await getCart(session.user.id) : null;
+  const settings = await getStoreSettings();
+  const tax = cart ? calculateTax(cart.subtotal, settings) : 0;
+  const total = cart ? cart.subtotal + tax : 0;
 
   return (
     <>
@@ -51,7 +55,13 @@ export default async function CheckoutPage() {
                 ))}
               </div>
               <div className="mt-5 border-t border-sky-100 pt-4 text-lg font-black text-brand-dark">
-                Total {formatPrice(cart.subtotal)}
+                {settings.taxEnabled ? (
+                  <div className="mb-2 flex justify-between text-sm font-bold text-slate-600">
+                    <span>Tax ({settings.taxPercentage}%)</span>
+                    <span>{formatPrice(tax)}</span>
+                  </div>
+                ) : null}
+                Total {formatPrice(total)}
               </div>
             </aside>
           </div>

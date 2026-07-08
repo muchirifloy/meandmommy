@@ -5,6 +5,7 @@ import { GuestCart } from "@/components/store/GuestCart";
 import { Header } from "@/components/store/Header";
 import { authOptions } from "@/lib/auth";
 import { getCart } from "@/lib/cart";
+import { calculateTax, getStoreSettings } from "@/lib/settings";
 
 function formatPrice(value: number) {
   return new Intl.NumberFormat("en-KE", {
@@ -17,6 +18,8 @@ function formatPrice(value: number) {
 export default async function CartPage() {
   const session = await getServerSession(authOptions);
   const cart = session?.user?.id ? await getCart(session.user.id) : null;
+  const settings = await getStoreSettings();
+  const tax = cart ? calculateTax(cart.subtotal, settings) : 0;
 
   return (
     <>
@@ -41,6 +44,16 @@ export default async function CartPage() {
               <div className="mt-4 flex justify-between text-slate-700">
                 <span>Subtotal</span>
                 <strong>{formatPrice(cart.subtotal)}</strong>
+              </div>
+              {settings.taxEnabled ? (
+                <div className="mt-3 flex justify-between text-sm text-slate-600">
+                  <span>Tax ({settings.taxPercentage}%)</span>
+                  <strong>{formatPrice(tax)}</strong>
+                </div>
+              ) : null}
+              <div className="mt-4 flex justify-between border-t border-sky-100 pt-4 text-lg text-slate-950">
+                <span>Total</span>
+                <strong>{formatPrice(cart.subtotal + tax)}</strong>
               </div>
               <Link href="/checkout" className="mt-6 flex justify-center rounded-full bg-brand px-6 py-3 font-black text-white">
                 Checkout with M-Pesa
