@@ -29,9 +29,9 @@ function money(value: number) {
 function miniBars(values: number[], color: string) {
   const max = Math.max(...values, 1);
   return (
-    <div className="flex h-12 items-end gap-1">
+    <div className="flex h-8 items-end gap-1">
       {values.map((value, index) => (
-        <span key={index} className={`w-2 rounded-t ${color}`} style={{ height: `${Math.max(18, (value / max) * 48)}px` }} />
+        <span key={index} className={`w-1.5 rounded-t ${color}`} style={{ height: `${Math.max(10, (value / max) * 32)}px` }} />
       ))}
     </div>
   );
@@ -183,48 +183,48 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
   ];
 
   return (
-    <section className="grid gap-6">
-      <div className="flex flex-wrap items-end justify-between gap-4">
+    <section className="grid gap-4 sm:gap-5">
+      <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-sm font-black uppercase tracking-wide text-[#4285f4]">Default</p>
-          <h1 className="text-3xl font-black text-slate-950">Admin Dashboard</h1>
+          <p className="text-[11px] font-black uppercase tracking-wide text-[#4285f4]">Dashboard</p>
+          <h1 className="text-2xl font-black text-slate-950 sm:text-3xl">Admin Dashboard</h1>
         </div>
-        <div className="flex flex-wrap gap-3">
-          <Link href="/admin/products" className="rounded-full bg-[#4285f4] px-5 py-3 text-sm font-black text-white shadow-sm hover:bg-[#2f6fd1]">
+        <div className="flex flex-wrap gap-2">
+          <Link href="/admin/products" className="rounded-full bg-[#4285f4] px-4 py-2.5 text-xs font-black text-white shadow-sm hover:bg-[#2f6fd1] sm:text-sm">
             Add product
           </Link>
-          <Link href="/admin/orders" className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700 hover:border-[#4285f4] hover:text-[#4285f4]">
+          <Link href="/admin/orders" className="rounded-full border border-slate-200 bg-white px-4 py-2.5 text-xs font-black text-slate-700 hover:border-[#4285f4] hover:text-[#4285f4] sm:text-sm">
             Manage orders
           </Link>
         </div>
       </div>
 
-      <div id="analytics" className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div id="analytics" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {cards.map((card) => {
           const Icon = card.icon;
           return (
             <article key={card.label} className="overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-slate-200">
-              <div className="flex items-start justify-between gap-4 p-5">
+              <div className="flex items-start justify-between gap-3 p-4">
                 <div>
-                  <p className="text-sm font-bold text-slate-500">{card.label}</p>
-                  <p className="mt-2 text-3xl font-black text-slate-950">{card.value}</p>
+                  <p className="text-xs font-bold text-slate-500">{card.label}</p>
+                  <p className="mt-1 text-2xl font-black text-slate-950">{card.value}</p>
                   <p className="mt-1 text-xs font-bold text-slate-400">{card.note}</p>
                 </div>
-                <span className={`grid h-11 w-11 place-items-center rounded-lg text-white ${card.color}`}>
+                <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-md text-white ${card.color}`}>
                   <Icon className="h-5 w-5" />
                 </span>
               </div>
-              <div className={`flex items-end justify-between gap-3 px-5 py-3 text-white ${card.color}`}>
+              <div className={`flex items-end justify-between gap-3 px-4 py-2 text-white ${card.color}`}>
                 {miniBars(card.bars, "bg-white/70")}
-                <TrendingUp className="h-5 w-5" />
+                <TrendingUp className="h-4 w-4" />
               </div>
             </article>
           );
         })}
       </div>
 
-      <div className="grid gap-5 xl:grid-cols-2">
-        <div className="rounded-lg bg-white p-5 shadow-sm ring-1 ring-slate-200">
+      <div className="grid gap-4 xl:grid-cols-2">
+        <div className="rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200 sm:p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="text-lg font-black text-slate-950">Orders graph</h2>
             <form className="flex gap-2">
@@ -237,7 +237,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
               <button className="rounded-md bg-[#4285f4] px-3 py-2 text-sm font-black text-white">Apply</button>
             </form>
           </div>
-          <div className="mt-5 flex h-48 items-end gap-2 overflow-x-auto border-b border-slate-100 pb-2">
+          <div className="mt-4 flex h-40 items-end gap-2 overflow-x-auto border-b border-slate-100 pb-2 sm:h-48">
             {stats.orderChart.length ? stats.orderChart.map((item, index) => (
               <div key={`${item.label}-${index}`} className="grid min-w-10 justify-items-center gap-2 text-[10px] font-bold text-slate-400">
                 <span className="w-7 rounded-t bg-[#4285f4]" style={{ height: `${Math.max(12, item.total / Math.max(stats.currentMonthSales, 1) * 160)}px` }} />
@@ -247,7 +247,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
           </div>
         </div>
 
-        <div className="rounded-lg bg-white p-5 shadow-sm ring-1 ring-slate-200">
+        <div className="rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200 sm:p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="text-lg font-black text-slate-950">Product sales graph</h2>
             <form className="flex gap-2">
@@ -277,8 +277,8 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
         </div>
       </div>
 
-      <div className="grid gap-5 xl:grid-cols-[1.25fr_1fr]">
-        <div className="rounded-lg bg-white p-5 shadow-sm ring-1 ring-slate-200">
+      <div className="grid gap-4 xl:grid-cols-[1.25fr_1fr]">
+        <div className="rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200 sm:p-5">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-black text-slate-950">Latest Orders</h2>
             <Link href="/admin/orders" className="text-sm font-black text-[#4285f4]">View all</Link>
@@ -296,7 +296,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
           </div>
         </div>
 
-        <div className="rounded-lg bg-white p-5 shadow-sm ring-1 ring-slate-200">
+        <div className="rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200 sm:p-5">
           <h2 className="text-lg font-black text-slate-950">Latest Updates</h2>
           <div className="mt-4 grid gap-4">
             {[
@@ -321,8 +321,8 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
         </div>
       </div>
 
-      <div id="inventory" className="grid gap-5 xl:grid-cols-[1fr_1fr]">
-        <div className="rounded-lg bg-white p-5 shadow-sm ring-1 ring-slate-200">
+      <div id="inventory" className="grid gap-4 xl:grid-cols-[1fr_1fr]">
+        <div className="rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200 sm:p-5">
           <div className="flex items-center gap-2">
             <Boxes className="h-5 w-5 text-[#4285f4]" />
             <h2 className="text-lg font-black text-slate-950">Stock At A Glance</h2>
@@ -338,7 +338,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
           </div>
         </div>
 
-        <div className="rounded-lg bg-white p-5 shadow-sm ring-1 ring-slate-200">
+        <div className="rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200 sm:p-5">
           <div className="flex items-center gap-2">
             <Package className="h-5 w-5 text-[#4285f4]" />
             <h2 className="text-lg font-black text-slate-950">Best Selling Products</h2>

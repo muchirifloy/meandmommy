@@ -6,6 +6,7 @@ import { ShoppingCart } from "lucide-react";
 import { useState } from "react";
 import { BrandLoader } from "@/components/store/BrandLoader";
 import { addGuestCartItem } from "@/lib/guest-cart";
+import { productPayload, trackCommerceEvent } from "@/lib/tracking";
 
 type ProductCardProps = {
   product: {
@@ -45,6 +46,7 @@ export function ProductCard({ product }: ProductCardProps) {
     if (response.ok) {
       setState("added");
       window.dispatchEvent(new CustomEvent("cart-updated", { detail: { quantity: 1 } }));
+      trackCommerceEvent({ event: "add_to_cart", product: productPayload(product), value: activePrice, currency: "KES" });
       return;
     }
 
@@ -55,6 +57,7 @@ export function ProductCard({ product }: ProductCardProps) {
       imageUrl: product.imageUrl,
       unitPrice: activePrice,
     });
+    trackCommerceEvent({ event: "add_to_cart", product: productPayload(product), value: activePrice, currency: "KES" });
     setState("added");
   }
 

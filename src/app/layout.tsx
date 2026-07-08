@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { AttentionTitle } from "@/components/store/AttentionTitle";
+import { MarketingScripts } from "@/components/store/MarketingScripts";
 import { WhatsAppFloatingButton } from "@/components/store/WhatsAppFloatingButton";
 import "./globals.css";
 
@@ -78,6 +79,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full">
+        <MarketingScripts />
         <AttentionTitle />
         {children}
         <WhatsAppFloatingButton />

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { CheckoutForm } from "@/components/checkout/CheckoutForm";
+import { CheckoutTracker } from "@/components/checkout/CheckoutTracker";
 import { Footer } from "@/components/store/Footer";
 import { Header } from "@/components/store/Header";
 import { authOptions } from "@/lib/auth";
@@ -21,6 +22,16 @@ export default async function CheckoutPage() {
   const settings = await getStoreSettings();
   const tax = cart ? calculateTax(cart.subtotal, settings) : 0;
   const total = cart ? cart.subtotal + tax : 0;
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://meandmommy.co.ke";
+  const trackingProducts = cart?.items.map((item) => ({
+    id: item.productId,
+    name: item.name,
+    price: item.unitPrice,
+    category: item.categoryName,
+    stockStatus: item.stock > 0 ? "in_stock" as const : "out_of_stock" as const,
+    url: `${baseUrl}/product/${item.slug}`,
+    description: item.name,
+  })) || [];
 
   return (
     <>
@@ -43,7 +54,8 @@ export default async function CheckoutPage() {
           <p className="mt-6 text-slate-600">Your cart is empty.</p>
         ) : (
           <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_360px]">
-            <CheckoutForm email={session.user.email} name={session.user.name} />
+            <CheckoutTracker products={trackingProducts} total={total} />
+            <CheckoutForm email={session.user.email} name={session.user.name} products={trackingProducts} total={total} />
             <aside className="h-fit rounded-lg bg-white p-6 shadow-sm ring-1 ring-sky-100">
               <h2 className="text-xl font-black text-slate-950">Order Summary</h2>
               <div className="mt-4 grid gap-3">

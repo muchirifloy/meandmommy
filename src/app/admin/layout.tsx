@@ -21,6 +21,7 @@ import {
   Video,
 } from "lucide-react";
 import { LogoutButton } from "@/components/auth/LogoutButton";
+import { AdminMobileNav } from "@/components/admin/AdminMobileNav";
 import { authOptions } from "@/lib/auth";
 
 const groups = [
@@ -68,9 +69,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   return (
     <div className="min-h-screen bg-[#eef3fb] text-slate-950">
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-60 border-r border-slate-200 bg-white shadow-sm lg:block">
-        <div className="flex h-14 items-center justify-between border-b border-slate-100 px-4">
-          <Link href="/admin" className="text-lg font-black text-[#4285f4]">Me & Mommy</Link>
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-56 border-r border-slate-200 bg-white shadow-sm lg:block">
+        <div className="flex h-14 items-center justify-between border-b border-slate-100 px-3">
+          <Link href="/admin" className="text-base font-black text-[#4285f4]">Me & Mommy</Link>
           <span className="rounded-full bg-[#4285f4]/10 px-2 py-0.5 text-[10px] font-black text-[#4285f4]">Admin</span>
         </div>
         <nav className="h-[calc(100vh-3.5rem)] overflow-y-auto px-3 py-4">
@@ -84,7 +85,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                     <Link
                       key={link.href}
                       href={link.href}
-                      className="flex items-center gap-2.5 rounded-md px-2.5 py-2 text-[13px] font-bold text-slate-600 transition hover:bg-[#4285f4] hover:text-white"
+                      className="flex items-center gap-2.5 rounded-md px-2.5 py-2 text-[12px] font-bold text-slate-600 transition hover:bg-[#4285f4] hover:text-white"
                     >
                       <Icon className="h-3.5 w-3.5" />
                       {link.label}
@@ -97,13 +98,16 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         </nav>
       </aside>
 
-      <header className="sticky top-0 z-20 bg-[#4285f4] text-white shadow-sm lg:pl-60">
-        <div className="flex min-h-14 items-center justify-between gap-4 px-4 sm:px-5">
-          <div>
-            <p className="text-xs font-black uppercase tracking-wide text-white/70">Admin Panel</p>
-            <h1 className="text-lg font-black">Store command center</h1>
+      <header className="sticky top-0 z-20 bg-[#4285f4] text-white shadow-sm lg:pl-56">
+        <div className="flex min-h-14 items-center justify-between gap-3 px-3 sm:px-5">
+          <div className="flex min-w-0 items-center gap-2">
+            <AdminMobileNav groups={groups} />
+            <div className="min-w-0">
+              <p className="text-[10px] font-black uppercase tracking-wide text-white/70">Admin</p>
+              <h1 className="truncate text-base font-black sm:text-lg">Store command center</h1>
+            </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex shrink-0 items-center gap-2">
             <Link href="/" target="_blank" rel="noreferrer" className="hidden rounded-full bg-white/12 px-4 py-2 text-sm font-black hover:bg-white/20 sm:inline-flex">
               View Store
             </Link>
@@ -113,8 +117,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         </div>
       </header>
 
-      <main className="lg:pl-60">
-        <div className="mx-auto w-full max-w-[1440px] px-4 py-5 sm:px-5">{children}</div>
+      <main className="lg:pl-56">
+        <div className="mx-auto w-full max-w-[1440px] px-3 py-4 sm:px-5">{children}</div>
       </main>
     </div>
   );

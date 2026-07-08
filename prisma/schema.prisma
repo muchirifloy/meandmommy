@@ -379,6 +379,23 @@ model AuditLog {
   actor User? @relation(fields: [actorId], references: [id], onDelete: SetNull)
 }
 
+model MarketingEvent {
+  id        String   @id @default(cuid())
+  event     String
+  productId String?
+  query     String?
+  payload   Json?
+  path      String?
+  userId    String?
+  sessionId String?
+  userAgent String?  @db.Text
+  createdAt DateTime @default(now())
+
+  @@index([event, createdAt])
+  @@index([productId])
+  @@index([userId])
+}
+
 model Offer {
   id            String        @id @default(cuid())
   name          String

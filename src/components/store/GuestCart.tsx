@@ -52,38 +52,38 @@ export function GuestCart() {
   }
 
   return (
-    <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_360px]">
-      <div className="grid gap-4">
+    <div className="mt-6 grid gap-5 lg:grid-cols-[1fr_340px]">
+      <div className="grid gap-3">
         {items.map((item) => (
-          <div key={item.id} className="grid gap-4 rounded-lg bg-white p-4 shadow-sm ring-1 ring-sky-100 sm:grid-cols-[92px_1fr_auto]">
+          <div key={item.id} className="grid gap-3 rounded-lg bg-white p-3 shadow-sm ring-1 ring-sky-100 sm:grid-cols-[86px_1fr_auto] sm:p-4">
             <Image
               src={item.imageUrl}
               alt={item.name}
               width={120}
               height={96}
-              className="aspect-[4/3] w-full rounded-lg object-cover sm:w-[92px]"
+              className="aspect-[4/3] w-full rounded-md object-cover sm:w-[86px]"
             />
-            <div>
-              <Link href={`/product/${item.slug}`} className="font-black text-slate-950 hover:text-brand-dark">
+            <div className="min-w-0">
+              <Link href={`/product/${item.slug}`} className="line-clamp-2 text-sm font-black text-slate-950 hover:text-brand-dark sm:text-base">
                 {item.name}
               </Link>
-              <p className="mt-1 text-sm text-slate-600">{formatPrice(item.unitPrice)} each</p>
-              <div className="mt-3 inline-flex items-center rounded-full border border-sky-100">
-                <button className="px-3 py-1 font-black" onClick={() => updateQuantity(item.id, item.quantity - 1)}>
+              <p className="mt-1 text-xs font-semibold text-slate-500">{formatPrice(item.unitPrice)} each</p>
+              <div className="mt-3 inline-flex h-9 items-center rounded-full border border-sky-100">
+                <button className="h-full px-3 text-base font-black" onClick={() => updateQuantity(item.id, item.quantity - 1)}>
                   -
                 </button>
-                <span className="min-w-8 text-center text-sm font-black">{item.quantity}</span>
-                <button className="px-3 py-1 font-black" onClick={() => updateQuantity(item.id, item.quantity + 1)}>
+                <span className="min-w-9 text-center text-sm font-black">{item.quantity}</span>
+                <button className="h-full px-3 text-base font-black" onClick={() => updateQuantity(item.id, item.quantity + 1)}>
                   +
                 </button>
               </div>
             </div>
-            <p className="font-black text-brand-dark">{formatPrice(item.unitPrice * item.quantity)}</p>
+            <p className="text-sm font-black text-brand-dark sm:text-right">{formatPrice(item.unitPrice * item.quantity)}</p>
           </div>
         ))}
       </div>
-      <aside className="h-fit rounded-lg bg-white p-6 shadow-sm ring-1 ring-sky-100">
-        <h2 className="text-xl font-black text-slate-950">Summary</h2>
+      <aside className="h-fit rounded-lg bg-white p-5 shadow-sm ring-1 ring-sky-100">
+        <h2 className="text-lg font-black text-slate-950">Summary</h2>
         <div className="mt-4 flex justify-between text-slate-700">
           <span>Subtotal</span>
           <strong>{formatPrice(subtotal)}</strong>

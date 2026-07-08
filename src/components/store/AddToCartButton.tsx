@@ -4,6 +4,7 @@ import { ShoppingCart } from "lucide-react";
 import { useState } from "react";
 import { BrandLoader } from "@/components/store/BrandLoader";
 import { addGuestCartItem } from "@/lib/guest-cart";
+import { productPayload, trackCommerceEvent } from "@/lib/tracking";
 
 type AddToCartButtonProps = {
   product: {
@@ -14,6 +15,8 @@ type AddToCartButtonProps = {
     price: number;
     salePrice: number | null;
     stock: number;
+    categoryName: string;
+    shortDescription?: string;
   };
 };
 
@@ -32,6 +35,7 @@ export function AddToCartButton({ product }: AddToCartButtonProps) {
     if (response.ok) {
       setState("added");
       window.dispatchEvent(new CustomEvent("cart-updated", { detail: { quantity: 1 } }));
+      trackCommerceEvent({ event: "add_to_cart", product: productPayload(product), value: activePrice, currency: "KES" });
       return;
     }
 
@@ -42,6 +46,7 @@ export function AddToCartButton({ product }: AddToCartButtonProps) {
       imageUrl: product.imageUrl,
       unitPrice: activePrice,
     });
+    trackCommerceEvent({ event: "add_to_cart", product: productPayload(product), value: activePrice, currency: "KES" });
     setState("added");
   }
 

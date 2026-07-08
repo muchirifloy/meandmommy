@@ -1,6 +1,7 @@
 import { Footer } from "@/components/store/Footer";
 import { Header } from "@/components/store/Header";
 import { ProductCard } from "@/components/store/ProductCard";
+import { SearchTracker } from "@/components/store/SearchTracker";
 import { getCatalog } from "@/lib/catalog";
 import { searchProducts } from "@/lib/search";
 
@@ -17,10 +18,23 @@ export default async function SearchPage({
   const { q = "" } = await searchParams;
   const { products } = await getCatalog();
   const results = searchProducts(products, q);
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://meandmommy.co.ke";
 
   return (
     <>
       <Header />
+      <SearchTracker
+        query={q}
+        products={results.map((product) => ({
+          id: product.id,
+          name: product.name,
+          price: product.salePrice || product.price,
+          category: product.categoryName,
+          stockStatus: product.stock > 0 ? "in_stock" : "out_of_stock",
+          url: `${baseUrl}/product/${product.slug}`,
+          description: product.shortDescription,
+        }))}
+      />
       <main className="container-shell py-12">
         <p className="text-sm font-black uppercase tracking-wide text-brand-dark">Search</p>
         <h1 className="mt-2 text-4xl font-black text-slate-950">

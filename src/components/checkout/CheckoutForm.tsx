@@ -2,8 +2,19 @@
 
 import { useState } from "react";
 import { BrandLoader } from "@/components/store/BrandLoader";
+import { trackCommerceEvent, type CommerceProductPayload } from "@/lib/tracking";
 
-export function CheckoutForm({ email, name }: { email?: string | null; name?: string | null }) {
+export function CheckoutForm({
+  email,
+  name,
+  products,
+  total,
+}: {
+  email?: string | null;
+  name?: string | null;
+  products: CommerceProductPayload[];
+  total: number;
+}) {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState<"mpesa" | "whatsapp" | "">("");
 
@@ -34,10 +45,12 @@ export function CheckoutForm({ email, name }: { email?: string | null; name?: st
 
     if (method === "whatsapp") {
       setMessage(`Order ${data.orderNumber} recorded. WhatsApp is opening so you can complete it with support.`);
+      trackCommerceEvent({ event: "purchase", products, value: total, currency: "KES", orderNumber: data.orderNumber });
       if (data.whatsappUrl) window.open(data.whatsappUrl, "_blank", "noopener,noreferrer");
       return;
     }
 
+    trackCommerceEvent({ event: "purchase", products, value: total, currency: "KES", orderNumber: data.orderNumber });
     setMessage(`M-Pesa prompt sent. Complete payment for order ${data.orderNumber}.`);
   }
 

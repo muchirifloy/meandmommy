@@ -10,10 +10,39 @@ const cartMutationSchema = z.object({
   quantity: z.number().int().min(1).max(50).default(1),
 });
 
+const cartUpdateSchema = z.object({
+  itemId: z.string().min(1),
+  quantity: z.number().int().min(0).max(50),
+});
+
 export async function GET() {
   if (!hasDatabaseUrl()) return NextResponse.json({ error: "Database not configured" }, { status: 503 });
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Login required" }, { status: 401 });
+
+  return NextResponse.json(await getCart(session.user.id));
+}
+
+export async function PATCH(request: Request) {
+  if (!hasDatabaseUrl()) return NextResponse.json({ error: "Database not configured" }, { status: 503 });
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) return NextResponse.json({ error: "Login required" }, { status: 401 });
+
+  const parsed = cartUpdateSchema.safeParse(await request.json().catch(() => null));
+  if (!parsed.success) return NextResponse.json({ error: "Invalid cart item" }, { status: 400 });
+
+  const db = getDb();
+  const item = await db.cartItem.findFirst({
+    where: { id: parsed.data.itemId, cart: { userId: session.user.id } },
+  });
+
+  if (!item) return NextResponse.json({ error: "Cart item not found" }, { status: 404 });
+
+  if (parsed.data.quantity === 0) {
+    await db.cartItem.delete({ where: { id: item.id } });
+  } else {
+    await db.cartItem.update({ where: { id: item.id }, data: { quantity: parsed.data.quantity } });
+  }
 
   return NextResponse.json(await getCart(session.user.id));
 }

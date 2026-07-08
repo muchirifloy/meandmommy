@@ -74,6 +74,28 @@ export default async function AdminOrdersPage({ searchParams }: { searchParams: 
                     </div>
                   ))}
                 </div>
+                <div className="rounded-md bg-white p-3 text-sm">
+                  <div className="flex justify-between py-1">
+                    <span className="text-slate-600">Subtotal</span>
+                    <strong>{money(Number(order.subtotal))}</strong>
+                  </div>
+                  {Number(order.discountTotal) > 0 ? (
+                    <div className="flex justify-between py-1">
+                      <span className="text-slate-600">Discount</span>
+                      <strong>-{money(Number(order.discountTotal))}</strong>
+                    </div>
+                  ) : null}
+                  {Number(order.shippingFee) > 0 ? (
+                    <div className="flex justify-between py-1">
+                      <span className="text-slate-600">Shipping</span>
+                      <strong>{money(Number(order.shippingFee))}</strong>
+                    </div>
+                  ) : null}
+                  <div className="mt-2 flex justify-between border-t border-slate-100 pt-2 text-base text-slate-950">
+                    <span className="font-black">Order total</span>
+                    <strong>{money(Number(order.total))}</strong>
+                  </div>
+                </div>
               </div>
               <form action={updateOrderStatus} className="grid h-fit gap-3 rounded-md bg-white p-3">
                 <input type="hidden" name="id" value={order.id} />

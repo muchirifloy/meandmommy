@@ -75,16 +75,15 @@ export default async function AccountPage() {
       <Header />
       <main className="bg-slate-50 pb-24 lg:pb-12">
         <section className="border-b border-slate-200 bg-white">
-          <div className="container-shell grid gap-5 py-6 md:grid-cols-[1fr_auto] md:items-center">
+          <div className="container-shell grid gap-3 py-4 md:grid-cols-[1fr_auto] md:items-center md:py-6">
             <div>
-              <p className="text-sm font-black uppercase tracking-wide text-brand-dark">Customer dashboard</p>
-              <h1 className="mt-1 text-3xl font-black text-slate-950 sm:text-4xl">Welcome back, {firstName}</h1>
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+              <h1 className="text-2xl font-black text-slate-950 sm:text-4xl">Welcome back, {firstName}</h1>
+              <p className="mt-1 max-w-2xl text-xs leading-5 text-slate-600 sm:text-sm sm:leading-6">
                 Shop faster, track orders, revisit saved items, and keep your Me & Mommy essentials in one calm place.
               </p>
             </div>
-            <div className="flex flex-wrap items-center gap-3 md:justify-end">
-              <Link href="/" className="inline-flex rounded-full bg-brand px-5 py-3 text-sm font-black text-white hover:bg-brand-dark">
+            <div className="flex flex-wrap items-center gap-2 md:justify-end">
+              <Link href="/" className="inline-flex rounded-full bg-brand px-4 py-2.5 text-xs font-black text-white hover:bg-brand-dark sm:text-sm">
                 Continue shopping
               </Link>
               <LogoutButton compact />
@@ -92,9 +91,9 @@ export default async function AccountPage() {
           </div>
         </section>
 
-        <section className="container-shell py-6">
-          <form action="/search" className="flex items-center rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-sm">
-            <Search className="h-5 w-5 text-brand-dark" />
+        <section className="container-shell py-4 sm:py-6">
+          <form action="/search" className="flex items-center rounded-lg border border-slate-200 bg-white px-3 py-2.5 shadow-sm sm:px-4 sm:py-3">
+            <Search className="h-4 w-4 text-brand-dark sm:h-5 sm:w-5" />
             <input
               name="q"
               placeholder="Search storage bags, sterilising tablets, cream..."
@@ -102,22 +101,22 @@ export default async function AccountPage() {
             />
           </form>
 
-          <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-4">
+          <div className="mt-4 grid grid-cols-4 gap-2 md:gap-3">
             {quickLinks.map((item) => {
               const Icon = item.icon;
               return (
                 <Link
                   key={item.label}
                   href={item.href}
-                  className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-brand hover:shadow-md"
+                  className="rounded-lg border border-slate-200 bg-white p-2.5 text-center shadow-sm transition hover:-translate-y-0.5 hover:border-brand hover:shadow-md sm:p-4 sm:text-left"
                 >
-                  <div className="flex items-center gap-3">
-                    <span className="grid h-10 w-10 place-items-center rounded-full bg-sky-50 text-brand-dark">
-                      <Icon className="h-5 w-5" />
+                  <div className="grid justify-items-center gap-1.5 sm:flex sm:items-center sm:justify-items-start sm:gap-3">
+                    <span className="grid h-9 w-9 place-items-center rounded-full bg-sky-50 text-brand-dark sm:h-10 sm:w-10">
+                      <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
                     </span>
                     <div>
-                      <p className="font-black text-slate-950">{item.label}</p>
-                      <p className="text-xs font-semibold text-slate-500">{item.detail}</p>
+                      <p className="text-xs font-black text-slate-950 sm:text-base">{item.label}</p>
+                      <p className="hidden text-xs font-semibold text-slate-500 sm:block">{item.detail}</p>
                     </div>
                   </div>
                 </Link>
@@ -126,12 +125,12 @@ export default async function AccountPage() {
           </div>
         </section>
 
-        <section id="shop" className="container-shell grid gap-6 lg:grid-cols-[1fr_340px]">
+        <section id="shop" className="container-shell grid gap-4 lg:grid-cols-[1fr_300px]">
           <div className="min-w-0">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <p className="text-sm font-black uppercase tracking-wide text-brand-dark">Hot picks</p>
-                <h2 className="text-2xl font-black text-slate-950">Featured Products</h2>
+                <p className="text-xs font-black uppercase tracking-wide text-brand-dark">Hot picks</p>
+                <h2 className="text-xl font-black text-slate-950 sm:text-2xl">Featured Products</h2>
               </div>
               <Link href="/" className="text-sm font-black text-brand-dark hover:text-slate-950">
                 View shop
@@ -149,21 +148,21 @@ export default async function AccountPage() {
           <aside className="grid gap-4">
             {homeOffer ? (
               <div className="overflow-hidden rounded-lg bg-slate-950 text-white shadow-sm">
-                <div className="p-5">
+                <div className="p-4">
                   <div className="flex items-center gap-2 text-sun">
-                    <Sparkles className="h-5 w-5" />
-                    <p className="text-sm font-black uppercase tracking-wide">Special offer</p>
+                    <Sparkles className="h-4 w-4" />
+                    <p className="text-xs font-black uppercase tracking-wide">Special offer</p>
                   </div>
-                  <h2 className="mt-3 text-2xl font-black">{homeOffer.name}</h2>
-                  <p className="mt-2 text-sm leading-6 text-white/78">{homeOffer.description}</p>
-                  <div className="mt-4 inline-flex rounded-full bg-white px-4 py-2 text-sm font-black text-slate-950">
+                  <h2 className="mt-2 text-lg font-black sm:text-xl">{homeOffer.name}</h2>
+                  <p className="mt-1 line-clamp-2 text-xs leading-5 text-white/78 sm:text-sm">{homeOffer.description}</p>
+                  <div className="mt-3 inline-flex rounded-full bg-white px-3 py-1.5 text-xs font-black text-slate-950">
                     Use {homeOffer.code}
                   </div>
                 </div>
               </div>
             ) : null}
 
-            <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
               <div className="flex items-center gap-2">
                 <Truck className="h-5 w-5 text-brand-dark" />
                 <h2 className="font-black text-slate-950">Shopping status</h2>
@@ -185,20 +184,20 @@ export default async function AccountPage() {
           </aside>
         </section>
 
-        <section className="container-shell mt-8 grid gap-6 lg:grid-cols-[1fr_1fr]">
-          <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <section className="container-shell mt-5 grid gap-4 lg:grid-cols-[1fr_1fr]">
+          <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
             <div className="flex items-center justify-between gap-3">
               <h2 className="text-xl font-black text-slate-950">Categories</h2>
               <Link href="/" className="text-sm font-black text-brand-dark hover:text-slate-950">
                 Browse all
               </Link>
             </div>
-            <div className="mt-4 flex gap-3 overflow-x-auto pb-2">
+            <div className="mt-3 flex snap-x gap-3 overflow-x-auto pb-2">
               {categories.map((category) => (
                 <Link
                   key={category.slug}
                   href={`/category/${category.slug}`}
-                  className="relative min-w-40 overflow-hidden rounded-lg bg-slate-950 p-4 text-white"
+                  className="relative min-w-[145px] snap-start overflow-hidden rounded-lg bg-slate-950 p-3 text-white sm:min-w-40 sm:p-4"
                 >
                   <Image
                     src={category.imageUrl}
@@ -207,22 +206,22 @@ export default async function AccountPage() {
                     sizes="180px"
                     className="object-cover opacity-35"
                   />
-                  <span className="relative z-10 block min-h-12 text-sm font-black leading-5">{category.name}</span>
+                  <span className="relative z-10 block min-h-10 text-xs font-black leading-5 sm:text-sm">{category.name}</span>
                 </Link>
               ))}
             </div>
           </div>
 
-          <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
             <div className="flex items-center justify-between gap-3">
               <h2 className="text-xl font-black text-slate-950">Recent Orders</h2>
               <Link href="/orders" className="text-sm font-black text-brand-dark hover:text-slate-950">
                 View orders
               </Link>
             </div>
-            <div className="mt-4 grid gap-3">
+            <div className="mt-3 grid gap-2">
               {orders.map((order) => (
-                <div key={order.id} className="flex items-center justify-between gap-3 rounded-lg bg-slate-50 p-4">
+                <div key={order.id} className="flex items-center justify-between gap-3 rounded-lg bg-slate-50 p-3">
                   <div>
                     <p className="font-black text-slate-950">{order.orderNumber}</p>
                     <p className="text-xs font-semibold text-slate-500">{friendlyStatus(order.status)}</p>

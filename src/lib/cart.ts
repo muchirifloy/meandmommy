@@ -29,6 +29,8 @@ export async function getCart(userId: string) {
       name: item.product.name,
       slug: item.product.slug,
       imageUrl: item.product.images[0]?.url || item.product.category.imageUrl || "/images/me-and-mommy-logo.png",
+      categoryName: item.product.category.name,
+      stock: item.product.stock,
       quantity: item.quantity,
       unitPrice,
       lineTotal: unitPrice * item.quantity,
@@ -41,4 +43,3 @@ export async function getCart(userId: string) {
     subtotal: items.reduce((sum, item) => sum + item.lineTotal, 0),
   };
 }
-

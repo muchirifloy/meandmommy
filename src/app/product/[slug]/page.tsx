@@ -5,6 +5,7 @@ import { Header } from "@/components/store/Header";
 import { AddToCartButton } from "@/components/store/AddToCartButton";
 import { ProductCard } from "@/components/store/ProductCard";
 import { ProductGallery } from "@/components/store/ProductGallery";
+import { ProductViewTracker } from "@/components/store/ProductViewTracker";
 import { getCatalog, getProduct } from "@/lib/catalog";
 
 const productHowToUse = {
@@ -81,12 +82,17 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const howToUse = productHowToUse[product.slug as keyof typeof productHowToUse];
   const activePrice = product.salePrice || product.price;
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://meandmommy.co.ke";
+  const absoluteImage = (url: string) => {
+    if (url.startsWith("http") || url.startsWith("data:")) return url;
+    return `${baseUrl}${url.startsWith("/") ? url : `/${url}`}`;
+  };
   const productJsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
+    sku: product.id,
     name: product.name,
     description: product.description,
-    image: product.images.map((image) => `${baseUrl}${image.url.startsWith("/") ? image.url : `/${image.url}`}`),
+    image: product.images.map((image) => absoluteImage(image.url)),
     brand: { "@type": "Brand", name: "Me & Mommy" },
     category: product.categoryName,
     offers: {
@@ -94,8 +100,10 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
       url: `${baseUrl}/product/${product.slug}`,
       priceCurrency: "KES",
       price: activePrice,
+      priceValidUntil: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().slice(0, 10),
       availability: product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
       itemCondition: "https://schema.org/NewCondition",
+      seller: { "@type": "Organization", name: "Me & Mommy" },
     },
   };
 
@@ -106,6 +114,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
       />
+      <ProductViewTracker product={product} />
       <main className="container-shell py-8">
         <section className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
           <ProductGallery name={product.name} images={product.images} />
@@ -113,6 +122,12 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             <p className="text-xs font-black uppercase tracking-wide text-brand-dark">{product.categoryName}</p>
             <h1 className="mt-2 text-3xl font-black leading-tight text-slate-950">{product.name}</h1>
             <p className="mt-3 leading-7 text-slate-600">{product.shortDescription}</p>
+            <div className="mt-4 flex flex-wrap gap-2 text-xs font-black">
+              <span className="rounded-full bg-sky-50 px-3 py-1.5 text-brand-dark">{product.categoryName}</span>
+              <span className={`rounded-full px-3 py-1.5 ${product.stock > 0 ? "bg-mint text-emerald-700" : "bg-rose-50 text-rose-700"}`}>
+                {product.stock > 0 ? "In stock" : "Out of stock"}
+              </span>
+            </div>
             <div className="mt-6 flex items-end gap-3">
               <span className="text-3xl font-black text-brand-dark">{formatPrice(activePrice)}</span>
               {product.salePrice ? <span className="text-lg text-slate-400 line-through">{formatPrice(product.price)}</span> : null}
