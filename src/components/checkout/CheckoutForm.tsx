@@ -5,12 +5,13 @@ import { BrandLoader } from "@/components/store/BrandLoader";
 
 export function CheckoutForm({ email, name }: { email?: string | null; name?: string | null }) {
   const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<"mpesa" | "whatsapp" | "">("");
 
   async function submit(formData: FormData) {
-    setLoading(true);
+    const method = formData.get("checkoutMethod") === "whatsapp" ? "whatsapp" : "mpesa";
+    setLoading(method);
     setMessage("");
-    const response = await fetch("/api/checkout/mpesa", {
+    const response = await fetch(`/api/checkout/${method}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -24,12 +25,20 @@ export function CheckoutForm({ email, name }: { email?: string | null; name?: st
       }),
     });
     const data = await response.json().catch(() => ({}));
-    setLoading(false);
-    setMessage(
-      response.ok
-        ? `M-Pesa prompt sent. Complete payment for order ${data.orderNumber}.`
-        : data.error || "Checkout failed.",
-    );
+    setLoading("");
+
+    if (!response.ok) {
+      setMessage(data.error || "Checkout failed.");
+      return;
+    }
+
+    if (method === "whatsapp") {
+      setMessage(`Order ${data.orderNumber} recorded. WhatsApp is opening so you can complete it with support.`);
+      if (data.whatsappUrl) window.open(data.whatsappUrl, "_blank", "noopener,noreferrer");
+      return;
+    }
+
+    setMessage(`M-Pesa prompt sent. Complete payment for order ${data.orderNumber}.`);
   }
 
   return (
@@ -41,9 +50,24 @@ export function CheckoutForm({ email, name }: { email?: string | null; name?: st
       <input name="city" required placeholder="City" className="rounded-lg border border-sky-100 px-4 py-3 outline-none focus:border-brand" />
       <input name="voucherCode" placeholder="Voucher code e.g. ME&MOMMY" className="rounded-lg border border-sky-100 px-4 py-3 uppercase outline-none focus:border-brand" />
       <textarea name="notes" placeholder="Delivery notes" className="min-h-24 rounded-lg border border-sky-100 px-4 py-3 outline-none focus:border-brand" />
-      <button disabled={loading} className="rounded-full bg-brand px-6 py-3 font-black text-white hover:bg-brand-dark disabled:opacity-60">
-        {loading ? <BrandLoader label="Sending STK..." /> : "Pay with M-Pesa Express"}
-      </button>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <button
+          name="checkoutMethod"
+          value="mpesa"
+          disabled={Boolean(loading)}
+          className="rounded-full bg-brand px-6 py-3 font-black text-white hover:bg-brand-dark disabled:opacity-60"
+        >
+          {loading === "mpesa" ? <BrandLoader label="Sending STK..." /> : "Pay with M-Pesa Express"}
+        </button>
+        <button
+          name="checkoutMethod"
+          value="whatsapp"
+          disabled={Boolean(loading)}
+          className="rounded-full bg-emerald-600 px-6 py-3 font-black text-white hover:bg-emerald-700 disabled:opacity-60"
+        >
+          {loading === "whatsapp" ? <BrandLoader label="Preparing WhatsApp..." /> : "Order through WhatsApp"}
+        </button>
+      </div>
       {message ? <p className="text-sm font-bold text-brand-dark">{message}</p> : null}
     </form>
   );
