@@ -19,7 +19,7 @@ fi
 
 "${PNPM[@]}" install --frozen-lockfile
 "${PNPM[@]}" db:generate
-"${PNPM[@]}" build
+"${PNPM[@]}" build:hostafrica
 
 if [ "${RUN_DB_PUSH:-0}" = "1" ]; then
   "${PNPM[@]}" db:push
