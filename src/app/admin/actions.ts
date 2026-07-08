@@ -38,6 +38,7 @@ const productSchema = z.object({
   stock: z.coerce.number().int().min(0),
   imageUrl: z.string().min(1).optional().or(z.literal("")),
   imageUrls: z.string().optional(),
+  compressedImageDataUrls: z.string().optional(),
   featured: z.coerce.boolean().optional(),
 });
 
@@ -47,7 +48,7 @@ async function uploadedImageDataUrls(formData: FormData) {
     .filter((value): value is File => value instanceof File && value.size > 0);
 
   const allowedTypes = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
-  const maxBytes = 1024 * 1024;
+  const maxBytes = 2 * 1024 * 1024;
 
   return Promise.all(
     files.slice(0, 6).map(async (file) => {
@@ -56,7 +57,7 @@ async function uploadedImageDataUrls(formData: FormData) {
       }
 
       if (file.size > maxBytes) {
-        throw new Error("Each product image must be 1MB or smaller.");
+        throw new Error("Each product image must be 2MB or smaller.");
       }
 
       const buffer = Buffer.from(await file.arrayBuffer());
@@ -77,12 +78,17 @@ async function uploadedSingleImageDataUrl(formData: FormData, field: string) {
 
 async function productImageUrls(formData: FormData, parsed: z.infer<typeof productSchema>) {
   const uploaded = await uploadedImageDataUrls(formData);
+  const compressed = (parsed.compressedImageDataUrls || "")
+    .split(/\n+/)
+    .map((value) => value.trim())
+    .filter(Boolean);
   return [
     parsed.imageUrl,
     ...(parsed.imageUrls || "")
       .split(/[\n,]+/)
       .map((value) => value.trim())
       .filter(Boolean),
+    ...compressed,
     ...uploaded,
   ]
     .filter((value): value is string => Boolean(value))

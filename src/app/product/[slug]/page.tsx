@@ -1,10 +1,10 @@
-import Image from "next/image";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Footer } from "@/components/store/Footer";
 import { Header } from "@/components/store/Header";
 import { AddToCartButton } from "@/components/store/AddToCartButton";
 import { ProductCard } from "@/components/store/ProductCard";
+import { ProductGallery } from "@/components/store/ProductGallery";
 import { getCatalog, getProduct } from "@/lib/catalog";
 
 const productHowToUse = {
@@ -108,26 +108,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
       />
       <main className="container-shell py-8">
         <section className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-          <div className="relative overflow-hidden rounded-lg bg-brand-soft">
-            <Image
-              src={product.imageUrl}
-              alt={product.images[0]?.alt || product.name}
-              width={900}
-              height={760}
-              priority
-              className="aspect-[4/3] w-full object-cover"
-              unoptimized={product.imageUrl.startsWith("data:")}
-            />
-            {product.images.length > 1 ? (
-              <div className="grid grid-cols-3 gap-2 bg-white p-2">
-                {product.images.slice(0, 3).map((image) => (
-                  <div key={image.url} className="relative aspect-[4/3] overflow-hidden rounded-md bg-sky-50">
-                    <Image src={image.url} alt={image.alt} fill sizes="160px" className="object-cover" unoptimized={image.url.startsWith("data:")} />
-                  </div>
-                ))}
-              </div>
-            ) : null}
-          </div>
+          <ProductGallery name={product.name} images={product.images} />
           <div className="rounded-lg border border-sky-100 bg-white p-5 shadow-sm">
             <p className="text-xs font-black uppercase tracking-wide text-brand-dark">{product.categoryName}</p>
             <h1 className="mt-2 text-3xl font-black leading-tight text-slate-950">{product.name}</h1>
