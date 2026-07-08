@@ -3,6 +3,12 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   reactCompiler: true,
   output: "standalone",
+  experimental: {
+    cpus: 1,
+    staticGenerationRetryCount: 1,
+    staticGenerationMaxConcurrency: 1,
+    staticGenerationMinPagesPerWorker: 1000,
+  },
   allowedDevOrigins: ["127.0.0.1", "169.254.123.150"],
   images: {},
   async headers() {

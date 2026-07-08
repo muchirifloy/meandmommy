@@ -86,6 +86,15 @@ pnpm db:push
 
 `pnpm build` creates a Next.js standalone server and copies `public` plus `.next/static` into the standalone output for cPanel hosting.
 
+On shared hosting, keep the build worker profile small. This repo already sets `experimental.cpus = 1`, configures Next.js static generation concurrency to `1`, builds with webpack, and the cPanel deploy script exports:
+
+```bash
+NEXT_PRIVATE_BUILD_WORKER_COUNT=1
+NODE_OPTIONS=--max-old-space-size=512
+```
+
+If HostAfrica still returns `EAGAIN`, stop extra Node processes from cPanel **Setup Node.js App**, then run the build again.
+
 The database should already have data, but if you need to seed/reset starter content:
 
 ```bash

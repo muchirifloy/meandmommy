@@ -3,6 +3,9 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
+export NEXT_PRIVATE_BUILD_WORKER_COUNT="${NEXT_PRIVATE_BUILD_WORKER_COUNT:-1}"
+export NODE_OPTIONS="${NODE_OPTIONS:---max-old-space-size=512}"
+
 if command -v corepack >/dev/null 2>&1; then
   corepack enable || true
   corepack prepare pnpm@latest --activate || true
