@@ -1,18 +1,54 @@
 "use client";
 
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import {
+  BarChart3,
+  Boxes,
+  FileText,
+  Headphones,
+  LayoutDashboard,
+  LockKeyhole,
+  Mail,
+  Menu,
+  Package,
+  Receipt,
+  Settings,
+  ShieldCheck,
+  ShoppingCart,
+  Star,
+  Tags,
+  Users,
+  Video,
+  X,
+} from "lucide-react";
 import { useState } from "react";
-import type { ComponentType } from "react";
 
 type AdminNavGroup = {
   label: string;
   links: Array<{
     label: string;
     href: string;
-    icon: ComponentType<{ className?: string }>;
   }>;
 };
+
+const iconMap = {
+  Analytics: BarChart3,
+  Categories: Tags,
+  Dashboard: LayoutDashboard,
+  Emails: Mail,
+  Inventory: Boxes,
+  Orders: ShoppingCart,
+  Offers: Star,
+  Pages: FileText,
+  Payments: Receipt,
+  Products: Package,
+  Reviews: ShieldCheck,
+  Security: LockKeyhole,
+  Settings,
+  Support: Headphones,
+  Users,
+  Videos: Video,
+} as const;
 
 export function AdminMobileNav({ groups }: { groups: AdminNavGroup[] }) {
   const [open, setOpen] = useState(false);
@@ -55,7 +91,7 @@ export function AdminMobileNav({ groups }: { groups: AdminNavGroup[] }) {
                   <p className="mb-1 px-2 text-[10px] font-black uppercase tracking-wide text-slate-400">{group.label}</p>
                   <div className="grid gap-1">
                     {group.links.map((link) => {
-                      const Icon = link.icon;
+                      const Icon = iconMap[link.label as keyof typeof iconMap] || LayoutDashboard;
                       return (
                         <Link
                           key={link.href}

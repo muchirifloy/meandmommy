@@ -66,6 +66,10 @@ const groups = [
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await getServerSession(authOptions);
   if (session?.user?.role !== Role.ADMIN) redirect("/login?callbackUrl=/admin");
+  const mobileGroups = groups.map((group) => ({
+    label: group.label,
+    links: group.links.map(({ label, href }) => ({ label, href })),
+  }));
 
   return (
     <div className="min-h-screen bg-[#eef3fb] text-slate-950">
@@ -101,7 +105,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       <header className="sticky top-0 z-20 bg-[#4285f4] text-white shadow-sm lg:pl-56">
         <div className="flex min-h-14 items-center justify-between gap-3 px-3 sm:px-5">
           <div className="flex min-w-0 items-center gap-2">
-            <AdminMobileNav groups={groups} />
+            <AdminMobileNav groups={mobileGroups} />
             <div className="min-w-0">
               <p className="text-[10px] font-black uppercase tracking-wide text-white/70">Admin</p>
               <h1 className="truncate text-base font-black sm:text-lg">Store command center</h1>
