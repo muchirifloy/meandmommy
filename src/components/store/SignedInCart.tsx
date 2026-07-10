@@ -138,7 +138,7 @@ export function SignedInCart({ initialItems, taxEnabled, taxPercentage }: Signed
           </div>
         </div>
         <Link href="/checkout" className="mt-5 flex justify-center rounded-full bg-brand px-6 py-3 text-sm font-black text-white">
-          Checkout with M-Pesa
+          Checkout
         </Link>
         {isPending ? <p className="mt-3 text-center text-xs font-bold text-slate-500">Updating cart...</p> : null}
       </aside>

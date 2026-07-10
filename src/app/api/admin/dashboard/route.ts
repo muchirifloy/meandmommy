@@ -37,6 +37,7 @@ export async function GET(request: Request) {
     const db = getOptionalDb();
     if (!db) throw new Error("Database not configured.");
 
+    const revenueStatuses = ["PAID", "PROCESSING", "SHIPPED", "DELIVERED", "COMPLETED"] as const;
     const currentStart = startOfMonth(0);
     const nextStart = startOfMonth(1);
     const previousStart = startOfMonth(-1);
@@ -52,6 +53,7 @@ export async function GET(request: Request) {
       openTickets,
       closedTickets,
       pendingPayments,
+      pendingOrders,
       orderItems,
       lowStockProducts,
       recentOrders,
@@ -65,16 +67,20 @@ export async function GET(request: Request) {
       db.order.count(),
       db.product.count({ where: { stock: { lte: 5 } } }),
       db.order.findMany({
-        where: { createdAt: { gte: currentStart, lt: nextStart }, status: { not: "CANCELLED" } },
+        where: { createdAt: { gte: currentStart, lt: nextStart }, status: { in: [...revenueStatuses] } },
         select: { total: true },
       }),
       db.order.findMany({
-        where: { createdAt: { gte: previousStart, lt: currentStart }, status: { not: "CANCELLED" } },
+        where: { createdAt: { gte: previousStart, lt: currentStart }, status: { in: [...revenueStatuses] } },
         select: { total: true },
       }),
       db.supportTicket.count({ where: { status: { in: ["OPEN", "IN_PROGRESS"] } } }),
       db.supportTicket.count({ where: { status: { in: ["RESOLVED", "CLOSED"] } } }),
       db.payment.count({ where: { status: "PENDING" } }),
+      db.order.findMany({
+        where: { status: { in: ["INCOMPLETE", "PENDING_PAYMENT"] } },
+        select: { total: true },
+      }),
       db.orderItem.findMany({ take: 500, orderBy: { order: { createdAt: "desc" } } }),
       db.product.findMany({
         where: { stock: { lte: 10 } },
@@ -93,12 +99,12 @@ export async function GET(request: Request) {
         take: 5,
       }),
       db.order.findMany({
-        where: { createdAt: { gte: orderAnalyticsStart }, status: { not: "CANCELLED" } },
+        where: { createdAt: { gte: orderAnalyticsStart }, status: { in: [...revenueStatuses] } },
         select: { createdAt: true, total: true },
         orderBy: { createdAt: "asc" },
       }),
       db.orderItem.findMany({
-        where: { order: { createdAt: { gte: productAnalyticsStart }, status: { not: "CANCELLED" } } },
+        where: { order: { createdAt: { gte: productAnalyticsStart }, status: { in: [...revenueStatuses] } } },
         include: { order: { select: { createdAt: true } } },
         take: 500,
       }),
@@ -123,6 +129,7 @@ export async function GET(request: Request) {
       lowStock,
       currentMonthSales,
       previousMonthSales,
+      pendingOrderValue: pendingOrders.reduce((sum, order) => sum + Number(order.total), 0),
       openTickets,
       closedTickets,
       pendingPayments,

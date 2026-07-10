@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { Role } from "@prisma/client";
 import { redirect } from "next/navigation";
@@ -12,6 +11,8 @@ import {
   Sparkles,
   Truck,
 } from "lucide-react";
+import { AccountCategoryRail } from "@/components/account/AccountCategoryRail";
+import { AccountSettings } from "@/components/account/AccountSettings";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { Footer } from "@/components/store/Footer";
 import { Header } from "@/components/store/Header";
@@ -78,9 +79,6 @@ export default async function AccountPage() {
           <div className="container-shell grid gap-3 py-4 md:grid-cols-[1fr_auto] md:items-center md:py-6">
             <div>
               <h1 className="text-2xl font-black text-slate-950 sm:text-4xl">Welcome back, {firstName}</h1>
-              <p className="mt-1 max-w-2xl text-xs leading-5 text-slate-600 sm:text-sm sm:leading-6">
-                Shop faster, track orders, revisit saved items, and keep your Me & Mommy essentials in one calm place.
-              </p>
             </div>
             <div className="flex flex-wrap items-center gap-2 md:justify-end">
               <Link href="/" className="inline-flex rounded-full bg-brand px-4 py-2.5 text-xs font-black text-white hover:bg-brand-dark sm:text-sm">
@@ -192,24 +190,7 @@ export default async function AccountPage() {
                 Browse all
               </Link>
             </div>
-            <div className="mt-3 flex snap-x gap-3 overflow-x-auto pb-2">
-              {categories.map((category) => (
-                <Link
-                  key={category.slug}
-                  href={`/category/${category.slug}`}
-                  className="relative min-w-[145px] snap-start overflow-hidden rounded-lg bg-slate-950 p-3 text-white sm:min-w-40 sm:p-4"
-                >
-                  <Image
-                    src={category.imageUrl}
-                    alt={category.name}
-                    fill
-                    sizes="180px"
-                    className="object-cover opacity-35"
-                  />
-                  <span className="relative z-10 block min-h-10 text-xs font-black leading-5 sm:text-sm">{category.name}</span>
-                </Link>
-              ))}
-            </div>
+            <AccountCategoryRail categories={categories} />
           </div>
 
           <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
@@ -237,6 +218,7 @@ export default async function AccountPage() {
             </div>
           </div>
         </section>
+        <AccountSettings email={session.user.email} />
       </main>
       <Footer />
     </>

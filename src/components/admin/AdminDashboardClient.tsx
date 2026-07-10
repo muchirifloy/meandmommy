@@ -26,6 +26,7 @@ type DashboardStats = {
   openTickets: number;
   closedTickets: number;
   pendingPayments: number;
+  pendingOrderValue: number;
   bestSellers: Array<{ name: string; quantity: number; revenue: number }>;
   lowStockProducts: Array<{ name: string; stock: number }>;
   recentOrders: Array<{ orderNumber: string; customerName: string; status: string; total: number }>;
@@ -45,6 +46,7 @@ const emptyStats: DashboardStats = {
   openTickets: 0,
   closedTickets: 0,
   pendingPayments: 0,
+  pendingOrderValue: 0,
   bestSellers: [],
   lowStockProducts: [],
   recentOrders: [],
@@ -133,10 +135,11 @@ export function AdminDashboardClient() {
   }, [stats.currentMonthSales, stats.previousMonthSales]);
 
   const cards = [
-    { label: "All Earnings", value: money(stats.currentMonthSales), note: `${delta >= 0 ? "+" : ""}${delta.toFixed(1)}% vs last month`, icon: DollarSign, color: "bg-amber-400", bars: [6, 9, 5, 12, 8, 13, 10] },
-    { label: "Orders", value: stats.orders, note: "Track purchase to delivery", icon: ShoppingCart, color: "bg-[#4285f4]", bars: [3, 7, 4, 8, 9, 5, 10] },
-    { label: "Customers", value: stats.customers, note: "Profiles and purchase history", icon: Users, color: "bg-emerald-500", bars: [5, 5, 7, 6, 9, 10, 8] },
-    { label: "Low Stock", value: stats.lowStock, note: "Needs attention", icon: AlertTriangle, color: "bg-rose-500", bars: [9, 7, 8, 4, 5, 3, 2] },
+    { label: "Paid Earnings", value: money(stats.currentMonthSales), href: "/admin/payments?status=SUCCESS", note: `${delta >= 0 ? "+" : ""}${delta.toFixed(1)}% vs last month`, icon: DollarSign, color: "bg-emerald-500", bars: [6, 9, 5, 12, 8, 13, 10] },
+    { label: "Unpaid Orders", value: money(stats.pendingOrderValue), href: "/admin/orders?status=PENDING_PAYMENT", note: "WhatsApp and pending M-Pesa", icon: Clock3, color: "bg-amber-400", bars: [2, 4, 3, 5, 4, 6, 5] },
+    { label: "Orders", value: stats.orders, href: "/admin/orders", note: "Track purchase to delivery", icon: ShoppingCart, color: "bg-[#4285f4]", bars: [3, 7, 4, 8, 9, 5, 10] },
+    { label: "Customers", value: stats.customers, href: "/admin/members?role=CUSTOMER", note: "Profiles and purchase history", icon: Users, color: "bg-sky-500", bars: [5, 5, 7, 6, 9, 10, 8] },
+    { label: "Low Stock", value: stats.lowStock, href: "/admin/products", note: "Needs attention", icon: AlertTriangle, color: "bg-rose-500", bars: [9, 7, 8, 4, 5, 3, 2] },
   ];
 
   return (
@@ -160,26 +163,26 @@ export function AdminDashboardClient() {
         <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm font-bold text-amber-800">{error}</div>
       ) : null}
 
-      <div id="analytics" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div id="analytics" className="grid grid-cols-2 gap-2 sm:gap-3 lg:grid-cols-3 xl:grid-cols-5">
         {cards.map((card) => {
           const Icon = card.icon;
           return (
-            <article key={card.label} className="overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-slate-200">
-              <div className="flex items-start justify-between gap-3 p-3.5 sm:p-4">
+            <Link key={card.label} href={card.href} className="overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-slate-200 transition hover:-translate-y-0.5 hover:ring-[#4285f4]">
+              <div className="flex items-start justify-between gap-2 p-3 sm:p-4">
                 <div>
-                  <p className="text-xs font-bold text-slate-500">{card.label}</p>
-                  <p className="mt-1 text-xl font-black text-slate-950 sm:text-2xl">{loading ? "..." : card.value}</p>
-                  <p className="mt-1 text-xs font-bold text-slate-400">{card.note}</p>
+                  <p className="text-[11px] font-bold text-slate-500 sm:text-xs">{card.label}</p>
+                  <p className="mt-1 text-base font-black text-slate-950 sm:text-xl">{loading ? "..." : card.value}</p>
+                  <p className="mt-1 line-clamp-1 text-[10px] font-bold text-slate-400 sm:text-xs">{card.note}</p>
                 </div>
-                <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-md text-white ${card.color}`}>
-                  <Icon className="h-5 w-5" />
+                <span className={`grid h-8 w-8 shrink-0 place-items-center rounded-md text-white ${card.color}`}>
+                  <Icon className="h-4 w-4" />
                 </span>
               </div>
-              <div className={`flex items-end justify-between gap-3 px-4 py-2 text-white ${card.color}`}>
+              <div className={`hidden items-end justify-between gap-3 px-4 py-2 text-white sm:flex ${card.color}`}>
                 {miniBars(card.bars, "bg-white/70")}
                 <TrendingUp className="h-4 w-4" />
               </div>
-            </article>
+            </Link>
           );
         })}
       </div>

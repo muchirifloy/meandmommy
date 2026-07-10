@@ -33,6 +33,7 @@ export default async function OrdersPage() {
         .findMany({
           where: { userId: session.user.id },
           include: { items: true },
+          take: 50,
           orderBy: { createdAt: "desc" },
         })
         .catch(() => [])
@@ -52,22 +53,22 @@ export default async function OrdersPage() {
           </Link>
         </div>
 
-        <section className="mt-6 grid gap-4">
+        <section className="mt-6 grid gap-2">
           {orders.map((order) => (
-            <article key={order.id} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-              <div className="flex flex-wrap items-start justify-between gap-4">
-                <div className="flex gap-3">
-                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-sky-50 text-brand-dark">
-                    <PackageCheck className="h-5 w-5" />
-                  </span>
-                  <div>
-                    <h2 className="font-black text-slate-950">{order.orderNumber}</h2>
-                    <p className="text-sm font-semibold text-slate-500">{friendlyStatus(order.status)}</p>
-                  </div>
+            <details key={order.id} className="group rounded-lg border border-slate-200 bg-white shadow-sm">
+              <summary className="grid cursor-pointer list-none grid-cols-[auto_1fr_auto] items-center gap-3 p-3">
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-sky-50 text-brand-dark">
+                  <PackageCheck className="h-4 w-4" />
+                </span>
+                <div className="min-w-0">
+                  <h2 className="truncate text-sm font-black text-slate-950">{order.orderNumber}</h2>
+                  <p className="text-xs font-semibold text-slate-500">
+                    {order.createdAt.toLocaleDateString("en-KE", { month: "short", day: "numeric", year: "numeric" })} - {friendlyStatus(order.status)}
+                  </p>
                 </div>
-                <strong className="text-lg text-brand-dark">{formatPrice(Number(order.total))}</strong>
-              </div>
-              <div className="mt-4 grid gap-2 border-t border-slate-100 pt-4 text-sm text-slate-600">
+                <strong className="text-sm text-brand-dark">{formatPrice(Number(order.total))}</strong>
+              </summary>
+              <div className="grid gap-2 border-t border-slate-100 px-3 pb-3 pt-3 text-sm text-slate-600">
                 {order.items.map((item) => (
                   <div key={item.id} className="flex justify-between gap-3">
                     <span>{item.name} x {item.quantity}</span>
@@ -75,7 +76,7 @@ export default async function OrdersPage() {
                   </div>
                 ))}
               </div>
-            </article>
+            </details>
           ))}
 
           {!orders.length ? (

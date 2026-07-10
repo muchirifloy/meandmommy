@@ -13,7 +13,8 @@ const credentialsSchema = z.object({
 
 export const authOptions: NextAuthOptions = {
   adapter: hasDatabaseUrl() ? (PrismaAdapter(getDb()) as NextAuthOptions["adapter"]) : undefined,
-  session: { strategy: "jwt" },
+  session: { strategy: "jwt", maxAge: 60 * 60 * 12, updateAge: 60 * 30 },
+  jwt: { maxAge: 60 * 60 * 12 },
   pages: {
     signIn: "/login",
   },
